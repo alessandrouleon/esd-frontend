@@ -8,7 +8,7 @@ import { Dashboards } from "../pages/Dashboards/inde";
 export const APP_PAGES = [
   {
     title: "Dashboards",
-    route: "/home",
+    route: "/dashBoard",
     icon: <SpaceDashboardIcon />,
     component: <Dashboards />,
     showMenu: true,

@@ -9,31 +9,76 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { COLORS } from "../../shared/themes/colors";
 import SendIcon from "@mui/icons-material/Send";
-import { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+
+import { COLORS } from "../../shared/themes/colors";
 import FundoLogin from "../../assets/fundo-login.svg";
+import { login } from "../../services/Login";
+import { UserToken } from "../../services/LocalStorage";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Alert } from "../../components/Alert";
+
+interface IFormTextField {
+  username: string;
+  password: string;
+}
+
+const initialStateAlert = {
+  open: false,
+  message: "",
+  type: "error" as "error" | "success",
+};
 
 export function Login() {
-  const [error, setError] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [alert, setAlert] = useState(initialStateAlert);
 
-  const onSubmit = async () => {
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  });
+
+  const onSubmit: SubmitHandler<IFormTextField> = async (data) => {
     try {
-      if (!username) {
-        setError(true);
+      const response = await login(data);
+      const [, payload] = response.data.token.split(".");
+      const decoded = JSON.parse(atob(payload));
+
+      if (response.data.token && response.data.token.length !== 0) {
+        UserToken.setLocalStorageToken(response.data.token);
+        UserToken.setLocalStorageName(decoded.username);
+        navigate("/dashBoard");
       } else {
-        setError(false);
+        setAlert({
+          open: true,
+          message: "Falha ao realizar login.",
+          type: "error",
+        });
       }
     } catch (error) {
-      () => {};
+      if (axios.isAxiosError(error) && error.response) {
+        const { message } = error.response.data;
+        setAlert({
+          open: true,
+          message: message || "Internal server error",
+          type: "error",
+        });
+      }
     }
   };
-  
-  
+
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleMouseDownPassword = (
@@ -54,6 +99,12 @@ export function Login() {
         height: "100vh",
       }}
     >
+      <Alert
+        open={alert.open}
+        onClose={() => setAlert({ ...alert, open: false })}
+        message={alert.message}
+        type={alert.type}
+      />
       <Grid
         container
         spacing={2}
@@ -105,78 +156,95 @@ export function Login() {
             >
               Informe seu usuário e senha para acessar o sistema
             </Typography>
-
-            <Stack spacing={2} width="100%">
-              <TextField
-                id="username"
-                label="Usuário"
-                placeholder="Digite seu usuário..."
-                size="small"
-                fullWidth
-                value={username}
-                onChange={(e) => {
-                  setUsername(e.target.value);
-                  if (e.target.value) {
-                    setError(false);
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Stack spacing={2} width="100%">
+                <TextField
+                  id="username"
+                  label="Usuário"
+                  placeholder="Digite seu usuário..."
+                  size="small"
+                  fullWidth
+                  {...register("username", {
+                    required: {
+                      value: true,
+                      message: "🛈 Campo é obrigatório.",
+                    },
+                    maxLength: {
+                      value: 50,
+                      message: "🛈 Campo excedeu o limite de caracters.",
+                    },
+                    minLength: {
+                      value: 3,
+                      message: "🛈 Campo tem menos de 3 caracters.",
+                    },
+                  })}
+                  error={!!errors?.username}
+                  helperText={
+                    errors?.username ? errors?.username.message : null
                   }
-                }}
-                error={error}
-                helperText={error ? "Preencha o campo vazio" : ""}
-                variant="outlined"
-              />
-              <TextField
-                id="password-id"
-                label="Senha"
-                placeholder="Digite sua senha..."
-                size="small"
-                fullWidth
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (e.target.value) {
-                    setError(false);
-                  }
-                }}
-                error={error}
-                helperText={error ? "Preencha o campo vazio" : ""}
-                variant="outlined"
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                  sx: { fontSize: 14 },
-                }}
-              />
-
-              <Button
-                variant="contained"
-                sx={{
-                  padding: "0.5rem 0",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-                fullWidth
-                onClick={onSubmit}
-              >
-                Acessar
-                <SendIcon
-                  style={{
-                    marginLeft: "0.8rem",
-                  }}
                 />
-              </Button>
-            </Stack>
+                <TextField
+                  id="password-id"
+                  label="Senha"
+                  placeholder="Digite sua senha..."
+                  size="small"
+                  fullWidth
+                  type={showPassword ? "text" : "password"}
+                  variant="outlined"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                    sx: { fontSize: 14 },
+                  }}
+                  {...register("password", {
+                    required: {
+                      value: true,
+                      message: "🛈 Campo é obrigatório.",
+                    },
+                    maxLength: {
+                      value: 50,
+                      message: "🛈 Campo excedeu o limite de caracters.",
+                    },
+                    minLength: {
+                      value: 3,
+                      message: "🛈 Campo tem menos de 3 caracters.",
+                    },
+                  })}
+                  error={!!errors?.password}
+                  helperText={
+                    errors?.password ? errors?.password.message : null
+                  }
+                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    padding: "0.5rem 0",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  fullWidth
+                >
+                  Acessar
+                  <SendIcon
+                    style={{
+                      marginLeft: "0.8rem",
+                    }}
+                  />
+                </Button>
+              </Stack>
+            </form>
           </Box>
         </Grid>
       </Grid>
