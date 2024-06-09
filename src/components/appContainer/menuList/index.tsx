@@ -5,9 +5,8 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-
 import { useNavigate, useLocation } from "react-router-dom";
-import { COLORS } from "../../../shared/themes/colors";
+import { COLORS } from "../../../themes/colors";
 import { APP_PAGES } from "../../../routes/pages.routes";
 
 interface MenuListProps {
@@ -17,10 +16,9 @@ interface MenuListProps {
 export function MenuList({ open }: MenuListProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  // const { resetSearchProvider } = useSearchParams();
+
 
   const handleNavigate = (page: string) => {
-    // resetSearchProvider();
     navigate(page);
   };
 

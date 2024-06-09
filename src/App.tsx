@@ -1,8 +1,8 @@
 import { ThemeProvider } from "styled-components";
-import { LightTheme } from "./shared/themes";
+import { LightTheme } from "./themes";
 import { BrowserRouter } from "react-router-dom";
 import { AppRoutes } from "./routes";
-import { GlobalStyle } from "./shared/themes/global";
+import { GlobalStyle } from "./themes/global";
 
 
 function App() {

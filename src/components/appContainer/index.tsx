@@ -6,39 +6,36 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
- import MenuIcon from "@mui/icons-material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
-// import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-
-
-// import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-// import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-// import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Button, List, ListItem, Menu } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { MenuList } from "./MenuList";
-import { Content } from "./Content";
+import { MenuList } from "./menuList";
+import { Content } from "./content";
+import AvatarComponent from "../avatar";
+import { signOut } from "../../contexts/Auth";
+import { UserToken } from "../../services/localStorage";
+import { getSingleRegistration } from "../../services/employees";
+import { EmployeeProps } from "../../pages/employees/interfaces";
+import { AppBar, Drawer, DrawerHeader } from "./styles";
+import { COLORS } from "../../themes/colors";
 import LogoESD from "../../assets/icon-esd.png";
 import LogoALP from "../../assets/alp-software.png";
-import { AppBar, Drawer, DrawerHeader } from "./styles";
-// import Cookies from 'universal-cookie';
-// import MailIcon from "@mui/icons-material/Mail";
-// import ApartmentIcon from "@mui/icons-material/Apartment";
-import { COLORS } from "../../shared/themes/colors";
-import { AccountCircle } from "@mui/icons-material";
-// import VersionModal from '../ModalVersion/version';
+import ImageDefault from "../../assets/image_defalt.png";
 
 interface AppContainerProps {
   children?: React.ReactNode;
 }
 
 export function AppContainer({ children }: AppContainerProps) {
-  // const ITEM_HEIGHT = 100;
   const [open, setOpen] = React.useState(true);
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  //const data = localStorage.getItem("data");
-  // const user = JSON.parse(data ?? '{"result":true, "count":42}');
+  const data: string | null = UserToken.getLocalStorageToken();
+  const username: string | null = UserToken.getLocalStorageName();
+  const [foundUser, setFoundUser] = React.useState<EmployeeProps | undefined>(
+    undefined
+  );
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -55,12 +52,26 @@ export function AppContainer({ children }: AppContainerProps) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  function Logout() {
-    // const cookie = new Cookies();
-    // cookie.remove('token');
-    localStorage.removeItem("data");
-    window.location.href = "/";
-  }
+
+  const handleFindUser = async () => {
+    try {
+      if (data) {
+        const [, payload] = data.split(".");
+        const decoded = JSON.parse(atob(payload));
+        const employee = await getSingleRegistration(decoded.employeeId);
+        return employee.data;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      const employee = await handleFindUser();
+      setFoundUser(employee);
+    };
+    fetchUser();
+  }, []);
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -103,15 +114,17 @@ export function AppContainer({ children }: AppContainerProps) {
             </Typography>
           </Box>
           <div>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleClick}
-              color="inherit"
-            >
-              <AccountCircle fontSize="medium" />
+            <IconButton onClick={handleClick} sx={{ p: 0 }}>
+              <AvatarComponent
+                src={`${
+                  foundUser?.imageId === "" || foundUser?.imageId === undefined
+                    ? ImageDefault
+                    : foundUser?.imageId
+                } `}
+                alt="Avatar"
+                size={40}
+                isOnline={true}
+              />
             </IconButton>
             <Menu
               id="menu-appbar"
@@ -127,25 +140,16 @@ export function AppContainer({ children }: AppContainerProps) {
               }}
               open={Boolean(anchorEl)}
               onClose={handleClose}
-              sx={{ mt: 4, mr: 4 }}
+              sx={{ mt: 5, mr: 4 }}
             >
               <Typography
                 m={1}
                 color={COLORS.NEUTRAL_800}
                 fontSize={14}
-                pl={2}
-                pr={2}
+                width={200}
               >
-                Usuário
-              </Typography>
-              <Typography
-                m={1}
-                color={COLORS.NEUTRAL_800}
-                fontSize={14}
-                pl={2}
-                pr={2}
-              >
-                matheus.castro
+                <strong> Usuário: </strong>
+                {username}
               </Typography>
               <Divider
                 orientation="horizontal"
@@ -157,7 +161,7 @@ export function AppContainer({ children }: AppContainerProps) {
                 <Button
                   fullWidth
                   variant="text"
-                  onClick={() => Logout()}
+                  onClick={signOut}
                   startIcon={<LogoutIcon />}
                   sx={{ justifyContent: "flex-start", borderRadius: "0" }}
                 >
@@ -165,7 +169,6 @@ export function AppContainer({ children }: AppContainerProps) {
                 </Button>
               </Box>
             </Menu>
-       
           </div>
         </Toolbar>
       </AppBar>
@@ -198,20 +201,15 @@ export function AppContainer({ children }: AppContainerProps) {
             }}
             onClick={handleDrawerClose}
           >
-            {theme.direction === "rtl" ? (
-              <MenuOpenIcon />
-            ) : (
-              <MenuOpenIcon />
-            )}
+            {theme.direction === "rtl" ? <MenuOpenIcon /> : <MenuOpenIcon />}
           </IconButton>
         </DrawerHeader>
-        {/* <Divider /> */}
         <MenuList open={open} />
         {open && (
           <List style={{ marginTop: `auto` }}>
-            <ListItem style={{ display: "flex", flexDirection: "column" }}>
-              {/* <VersionModal /> */}
-            </ListItem>
+            <ListItem
+              style={{ display: "flex", flexDirection: "column" }}
+            ></ListItem>
           </List>
         )}
       </Drawer>

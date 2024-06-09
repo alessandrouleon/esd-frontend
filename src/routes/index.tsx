@@ -1,15 +1,13 @@
-// import {useState} from 'react';
 import {Route, Routes} from 'react-router-dom';
-// import Cookies from 'universal-cookie';
-import {DefaultLayout} from '../layouts/DefaultLayout';
-import {NotFound} from '../pages/NotFound';
+import {DefaultLayout} from '../layouts/defaultLayout';
+import {NotFound} from '../pages/notFound';
 // import {useToken} from '../shared/hooks/auth';
 
 import {APP_PAGES} from './pages.routes';
-import { Login } from '../pages/Login';
+import { Login } from '../pages/login';
 
 export function AppRoutes() {
-  // const {permission} = useToken();
+ //  const {permission} = useToken();
 
   return (
     <Routes>

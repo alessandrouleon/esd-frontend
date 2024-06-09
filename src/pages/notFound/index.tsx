@@ -1,5 +1,5 @@
 import {Box, Button, Container, Typography} from '@mui/material';
-// import {signOut} from '../../components/Unauthorized';
+import { signOut } from '../../contexts/Auth';
 
 export function NotFound() {
   return (
@@ -34,7 +34,7 @@ export function NotFound() {
             </Typography>
           </Typography>
           <Button
-            // onClick={signOut}
+            onClick={signOut}
             variant="contained"
             color="secondary"
             style={{maxWidth: '200px', marginTop: '60px', fontWeight: 'bold'}}>

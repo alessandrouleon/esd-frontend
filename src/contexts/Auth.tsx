@@ -1,4 +1,4 @@
-import { UserToken } from "../services/LocalStorage";
+import { UserToken } from "../services/localStorage";
 
 function signOut() {
   UserToken.removeLocalStorageToken();

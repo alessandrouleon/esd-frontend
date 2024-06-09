@@ -1,5 +1,5 @@
-import {BoxStyled} from '../styles';
 import React from 'react';
+import {BoxStyled} from '../styles';
 
 interface ContentProps {
   children: React.ReactNode;

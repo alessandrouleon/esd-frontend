@@ -7,7 +7,7 @@ import {
   ReactNode,
 } from "react";
 import { api } from "../services/api";
-import { signOut } from "./auth"; 
+import { signOut } from "./Auth";
 
 interface User {
   token: string;
@@ -24,13 +24,14 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-export const AuthContext = createContext<AuthContextData>({} as AuthContextData);
+export const AuthContext = createContext<AuthContextData>(
+  {} as AuthContextData
+);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("@auth:esd");
-
 
   const getNewToken = useCallback(() => {
     api
@@ -87,5 +88,3 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     </AuthContext.Provider>
   );
 };
-
-

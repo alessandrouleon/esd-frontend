@@ -1,9 +1,9 @@
 import Diversity2Icon from "@mui/icons-material/Diversity2";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
 import SpaceDashboardIcon  from "@mui/icons-material/SpaceDashboard";
-import { Shifts } from "../pages/Shifts";
-import { Departments } from "../pages/Departments";
-import { Dashboards } from "../pages/Dashboards/inde";
+import { Shifts } from "../pages/shifts";
+import { Departments } from "../pages/departments";
+import { Dashboards } from "../pages/dashboards/inde";
 
 export const APP_PAGES = [
   {

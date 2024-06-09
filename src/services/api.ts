@@ -1,6 +1,6 @@
 import axios, { AxiosRequestHeaders } from "axios";
-import { UserToken } from "./LocalStorage";
-import { signOut } from "../contexts/auth";
+import { UserToken } from "./localStorage";
+import { signOut } from "../contexts/Auth";
 
 export const api = axios.create({
   baseURL: `${import.meta.env.VITE_PORT_PROJECT_BACKEND}`,

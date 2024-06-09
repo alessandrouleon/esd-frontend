@@ -12,30 +12,24 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-
-import { COLORS } from "../../shared/themes/colors";
-import FundoLogin from "../../assets/fundo-login.svg";
-import { login } from "../../services/Login";
-import { UserToken } from "../../services/LocalStorage";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Alert } from "../../components/Alert";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { login } from "../../services/login";
+import { UserToken } from "../../services/localStorage";
+import { Alert } from "../../components/alert";
+import { COLORS } from "../../themes/colors";
+import { InitialAlertProps } from "../../components/alert/interfaces";
+import FundoLogin from "../../assets/fundo-login.svg";
 
-interface IFormTextField {
+interface FormTextFieldProps {
   username: string;
   password: string;
 }
 
-const initialStateAlert = {
-  open: false,
-  message: "",
-  type: "error" as "error" | "success",
-};
-
 export function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const [alert, setAlert] = useState(initialStateAlert);
+  const [alert, setAlert] = useState(InitialAlertProps);
 
   const navigate = useNavigate();
 
@@ -50,7 +44,7 @@ export function Login() {
     },
   });
 
-  const onSubmit: SubmitHandler<IFormTextField> = async (data) => {
+  const onSubmit: SubmitHandler<FormTextFieldProps> = async (data) => {
     try {
       const response = await login(data);
       const [, payload] = response.data.token.split(".");

@@ -2,22 +2,6 @@ export const COLORS = {
     BACKGROUND_DARK: "#F9F9F9",
     BACKGROUND_BASE: "#FFFFFF",
   
-    // PRIMARY_50:'#f3e5f5',
-    // PRIMARY_100:'#e1bee7',
-    // PRIMARY_200: '#ce93d8',
-    // PRIMARY_300:'#ba68c8',
-    // PRIMARY_400: '#ab47bc',
-    // PRIMARY_500: '#9c27b0',
-    // PRIMARY_600: '#8e24aa',
-    // PRIMARY_700:'#7b1fa2',
-    // PRIMARY_800: '#6a1b9a',
-    // PRIMARY_900: '#4a148c',
-  
-  //   PRIMARY_A100: '#ea80fc',
-  //   PRIMARY_A200: '#e040fb',
-  //   PRIMARY_A400: '#d500f9',
-  //   PRIMARY_A700: '#aa00ff',
-    
     PRIMARY_50: "#e3f2fd",
     PRIMARY_100: "#bbdefb",
     PRIMARY_200: "#90caf9",
