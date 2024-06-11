@@ -47,11 +47,11 @@ export function Login() {
   const onSubmit: SubmitHandler<FormTextFieldProps> = async (data) => {
     try {
       const response = await login(data);
-      const [, payload] = response.data.token.split(".");
+      const [, payload] = response.data.access_token.split(".");
       const decoded = JSON.parse(atob(payload));
 
-      if (response.data.token && response.data.token.length !== 0) {
-        UserToken.setLocalStorageToken(response.data.token);
+      if (response.data.access_token && response.data.access_token.length !== 0) {
+        UserToken.setLocalStorageToken(response.data.access_token);
         UserToken.setLocalStorageName(decoded.username);
         navigate("/dashBoard");
       } else {

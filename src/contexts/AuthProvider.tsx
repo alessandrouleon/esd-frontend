@@ -1,22 +1,11 @@
-import * as jwt from "jsonwebtoken";
-import {
-  createContext,
-  useState,
-  useEffect,
-  useCallback,
-  ReactNode,
-} from "react";
+import React, { createContext, useState, useEffect, ReactNode } from "react";
 import { api } from "../services/api";
 import { signOut } from "./Auth";
-
-interface User {
-  token: string;
-}
 
 export interface AuthContextData {
   signed: boolean;
   loading: boolean;
-  user: User | null;
+  user: string | null;
   signOut: () => void;
 }
 
@@ -28,52 +17,27 @@ export const AuthContext = createContext<AuthContextData>(
   {} as AuthContextData
 );
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(false);
-  const token = localStorage.getItem("@auth:esd");
-
-  const getNewToken = useCallback(() => {
-    api
-      .post("/auth", { token })
-      .then((response) => {
-        if (response.status === 201) {
-          setUser(response.data);
-          localStorage.setItem("@auth:esd", JSON.stringify(response.data));
-          api.defaults.headers.Authorization = `Bearer ${response.data.token}`;
-          setLoading(false);
-        }
-      })
-      .catch(() => {
-        signOut();
-        setLoading(false);
-      });
-  }, [token]);
-
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const storaged = localStorage.getItem("@auth:esd");
+  
   useEffect(() => {
-    setLoading(true);
-    if (!user) {
-      const storaged = localStorage.getItem("@auth:esd");
+    if (storaged) {
+      const [, payload] = storaged.split(".");
+      const decoded = JSON.parse(atob(payload));
       const timeNow = new Date().getTime();
 
-      if (storaged && token) {
-        const parsedStoraged: User = JSON.parse(storaged);
-        const { exp } = jwt.decode(parsedStoraged.token) as { exp: number };
-        if (exp * 1000 >= timeNow) {
-          api.defaults.headers.Authorization = `Bearer ${parsedStoraged.token}`;
-          setUser(parsedStoraged);
-          setLoading(false);
-        } else {
-          getNewToken();
-        }
-      } else if (token) {
-        getNewToken();
+      if (decoded && decoded.exp * 1000 > timeNow) {
+        api.defaults.headers.Authorization = `Bearer ${storaged}`;
+        setUser(decoded.username);
       } else {
+        signOut();
         localStorage.clear();
-        window.location.href = `${import.meta.env.VITE_APP_FRONTEND_URL}`;
       }
     }
-  }, [user, token, getNewToken]);
+    setLoading(false);
+  }, []);
 
   return (
     <AuthContext.Provider

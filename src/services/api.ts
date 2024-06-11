@@ -8,15 +8,15 @@ export const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = UserToken.getLocalStorageToken();
-    if (token) {
+    const access_token = UserToken.getLocalStorageToken();
+    if (access_token) {
       if (config.headers) {
         (config.headers as AxiosRequestHeaders)[
           "Authorization"
-        ] = `Bearer ${token}`;
+        ] = `Bearer ${access_token}`;
       } else {
         config.headers = {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${access_token}`,
         } as AxiosRequestHeaders;
       }
     }
