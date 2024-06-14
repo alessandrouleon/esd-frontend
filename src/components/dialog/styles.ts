@@ -3,6 +3,15 @@ import { styled as styledMaterial } from '@mui/material/styles';
 import styled from 'styled-components';
 import { COLORS } from '../../themes/colors';
 
+export interface ICreateModalProps {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setAlert: (data: { open: boolean; message: string; type: 'error' | 'success' }) => void;
+  setDataRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  dataRefresh: boolean;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+}
+
 interface IRequestProps {
   valuewidth: string;
 }

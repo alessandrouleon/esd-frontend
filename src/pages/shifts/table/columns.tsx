@@ -1,5 +1,5 @@
 
-import { Shift } from "../interfaces/shifits";
+import { Shift } from "../interfaces";
 
 
 interface Column {

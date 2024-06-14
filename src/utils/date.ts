@@ -1,6 +1,6 @@
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
-export const formatTime = (timeString: string) => {
-  return format(new Date(timeString), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR });
-};
+import { formatInTimeZone } from 'date-fns-tz';
+
+export const formatTime = (timeString: string): string =>
+  formatInTimeZone(new Date(timeString), 'UTC', 'dd/MM/yyyy HH:mm:ss');
+

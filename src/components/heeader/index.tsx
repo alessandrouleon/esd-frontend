@@ -15,6 +15,7 @@ interface HeaderProps {
   textBtnImp: string;
   textBtnCreate: string;
   onSearch: (searchValue: string) => void;
+  handleSave: () => void;
 }
 
 export function HeaderTable({
@@ -23,6 +24,7 @@ export function HeaderTable({
   textBtnImp,
   textBtnCreate,
   onSearch,
+  handleSave
 }: HeaderProps) {
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,7 +82,7 @@ export function HeaderTable({
           >
             {textBtnImp}
           </Button>
-          <Button variant="contained">{textBtnCreate}</Button>
+          <Button variant="contained" onClick={handleSave}>{textBtnCreate}</Button>
         </Grid>
       </Grid>
     </>

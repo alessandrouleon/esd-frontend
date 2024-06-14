@@ -1,4 +1,3 @@
-// import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -8,7 +7,7 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { findManyShift } from "../../services/shifts";
 import { columns } from "./table/columns";
-import { initialStateData } from "./interfaces/shifits";
+import { initialStateData } from "./interfaces";
 import { useEffect, useState } from "react";
 import { formatTime } from "../../utils/date";
 import { Grid, IconButton } from "@mui/material";
@@ -16,24 +15,30 @@ import { COLORS } from "../../themes/colors";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { HeaderTable } from "../../components/heeader";
+import { CreateModal } from "./modal/createModal";
+import { Alert } from "../../components/alert";
+import { InitialAlertProps } from "../../components/alert/interfaces";
 
 export function Shifts() {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(11);
   const [data, setData] = useState(initialStateData);
-
+  const [open, setOpen] = useState(false);
+  const [dataRefresh, setDataRefresh] = useState(false);
+  const [alert, setAlert] = useState(InitialAlertProps);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchValue, setSearchValue] = useState("");
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSearch = (value: any) => {
     setSearchValue(value);
-
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
+
+  const handleOpen = () => setOpen(!open);
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -42,35 +47,56 @@ export function Shifts() {
     setPage(0); // Reseta para a primeira página ao alterar o número de linhas por página
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await findManyShift(page + 1);
-        setData({
-          shifts: response.data.shifts,
-          total: response.data.total,
-          currentPage: response.data.currentPage,
-          nextPage: response.data.nextPage,
-          prevPage: response.data.prevPage,
-          lastPage: response.data.lastPage,
-        });
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  const fetchData = async (page: number) => {
+    try {
+      const response = await findManyShift(page);
+      setData({
+        shifts: response.data.shifts,
+        total: response.data.total,
+        currentPage: response.data.currentPage,
+        nextPage: response.data.nextPage,
+        prevPage: response.data.prevPage,
+        lastPage: response.data.lastPage,
+      });
+      setDataRefresh(true);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
-    fetchData();
-  }, [page, rowsPerPage]);
+  useEffect(() => {
+    fetchData(page);
+  }, [page, dataRefresh]);
 
   return (
     <>
+      <Alert
+        open={alert.open}
+        onClose={() => setAlert({ ...alert, open: false })}
+        message={alert.message}
+        type={alert.type}
+      />
+
+      {open && (
+        <CreateModal
+          open={open}
+          setOpen={setOpen}
+          setPage={setPage}
+          setDataRefresh={setDataRefresh}
+          dataRefresh={dataRefresh}
+          setAlert={setAlert}
+        />
+      )}
+
       <HeaderTable
         titleModule="Turno"
         onSearch={handleSearch}
         textBtnExp="Exportar"
         textBtnImp="Importar"
         textBtnCreate="Novo Turno"
+        handleSave={handleOpen}
       />
+
       <TableContainer>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -126,7 +152,7 @@ export function Shifts() {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
+        rowsPerPageOptions={[0]}
         component="div"
         count={data.total}
         rowsPerPage={rowsPerPage}

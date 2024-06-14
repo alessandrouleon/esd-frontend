@@ -23,3 +23,12 @@ export const initialStateData: IUpData = {
   prevPage: null,
   lastPage: 0,
 };
+
+
+export interface IFormCreateShift {
+  code: string;
+  description: string;
+}
+
+
+
