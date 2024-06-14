@@ -1,47 +1,50 @@
-import { TextField, Box, Grid, Button } from "@mui/material";
+import {
+  TextField,
+  Box,
+  Grid,
+  Button,
+} from "@mui/material";
 import axios from "axios";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { createShift } from "../../../services/shifts";
-import { IFormCreateShift } from "../interfaces";
-import DialogContainer from "../../../components/dialog";
+import  {useState}  from "react";
+import { DefaultValues, SubmitHandler, useForm } from "react-hook-form";
+import {IEditModalProps, IFormUpdateShift} from "../interfaces";
 import { FormModal } from "../styles";
-import { ICreateModalProps } from "../../../components/dialog/styles";
+import { updateShift } from "../../../services/shifts";
+import DialogContainer from "../../../components/dialog";
 
-export function CreateModal({
+export function UpdateModal({
   open,
   setOpen,
   setAlert,
   setDataRefresh,
   dataRefresh,
-  setPage,
-}: ICreateModalProps) {
+  shift,
+}: IEditModalProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [loading, setLoading] = useState(false);
+  const defaultValues: DefaultValues<IFormUpdateShift> = shift;
+
+
+  const { register, handleSubmit, formState: { errors } } = useForm<IFormUpdateShift>({
+    defaultValues,
+  });
+
   const handleClose = () => {
     setOpen(false);
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<IFormCreateShift>({
-    defaultValues: {
-      code: "",
-      description: "",
-    },
-  });
-
-  const onSubmit: SubmitHandler<IFormCreateShift> = async (data) => {
+  const onSubmit: SubmitHandler<IFormUpdateShift> = async (data) => {
     try {
-      const response = await createShift(data);
-      if (response.status === 201) {
-        setPage(0);
+      setLoading(true);
+      const response = await updateShift(shift.id, data);
+
+      if (response.status === 200) {
         setDataRefresh(!dataRefresh);
         setOpen(false);
-        reset();
+        setLoading(false);
         setAlert({
           open: true,
-          message: "Turno cadastrado com sucesso.",
+          message: "Turno alterado com sucesso",
           type: "success",
         });
       }
@@ -57,11 +60,12 @@ export function CreateModal({
     }
   };
 
+
   return (
     <DialogContainer
       open={open}
-      title="Cadastrar turno"
-      subtitle="Preencha o formulário de turno."
+      title="Editar Turno"
+      subtitle="Edite o formulário de turno."
     >
       <FormModal onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
@@ -112,6 +116,7 @@ export function CreateModal({
             />
           </Grid>
         </Grid>
+
         <Box
           style={{
             display: "flex",
@@ -121,7 +126,7 @@ export function CreateModal({
         >
           <Button onClick={handleClose}>Cancelar</Button>
           <Button sx={{ ml: 2 }} variant="contained" type="submit">
-            Cadastra
+            Salvar
           </Button>
         </Box>
       </FormModal>

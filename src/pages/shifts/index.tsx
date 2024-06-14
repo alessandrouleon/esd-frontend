@@ -7,7 +7,11 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { findManyShift } from "../../services/shifts";
 import { columns } from "./table/columns";
-import { initialStateData } from "./interfaces";
+import {
+  IFormUpdateShift,
+  initialShiftUpdate,
+  initialStateData,
+} from "./interfaces";
 import { useEffect, useState } from "react";
 import { formatTime } from "../../utils/date";
 import { Grid, IconButton } from "@mui/material";
@@ -18,6 +22,7 @@ import { HeaderTable } from "../../components/heeader";
 import { CreateModal } from "./modal/createModal";
 import { Alert } from "../../components/alert";
 import { InitialAlertProps } from "../../components/alert/interfaces";
+import { UpdateModal } from "./modal/updateModal";
 
 export function Shifts() {
   const [page, setPage] = useState(0);
@@ -26,6 +31,9 @@ export function Shifts() {
   const [open, setOpen] = useState(false);
   const [dataRefresh, setDataRefresh] = useState(false);
   const [alert, setAlert] = useState(InitialAlertProps);
+  const [shift, setShift] = useState<IFormUpdateShift>(initialShiftUpdate);
+
+  const [openUpdate, setOpenUpdate] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchValue, setSearchValue] = useState("");
 
@@ -39,6 +47,11 @@ export function Shifts() {
   };
 
   const handleOpen = () => setOpen(!open);
+
+  const handleUpdate = (item: IFormUpdateShift) => {
+    setShift(item);
+    setOpenUpdate(!openUpdate);
+  };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -88,6 +101,17 @@ export function Shifts() {
         />
       )}
 
+      {openUpdate && (
+        <UpdateModal
+          shift={shift}
+          open={openUpdate}
+          setOpen={setOpenUpdate}
+          setAlert={setAlert}
+          setDataRefresh={setDataRefresh}
+          dataRefresh={dataRefresh}
+        />
+      )}
+
       <HeaderTable
         titleModule="Turno"
         onSearch={handleSearch}
@@ -131,7 +155,10 @@ export function Shifts() {
                         {column.id === "actions" && (
                           <Grid container spacing={1} justifyContent="center">
                             <Grid item>
-                              <IconButton size="small" onClick={() => {}}>
+                              <IconButton
+                                size="small"
+                                onClick={() => handleUpdate(shift)}
+                              >
                                 <EditIcon />
                               </IconButton>
                             </Grid>
