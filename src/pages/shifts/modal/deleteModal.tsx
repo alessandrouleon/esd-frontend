@@ -17,6 +17,7 @@ export function DeleteModal({
 }: IDeleteModalProps) {
   const handleClose = () => {
     setOpen(false);
+    setDataRefresh(!dataRefresh);
   };
 
   const handleDelete = useCallback(async () => {

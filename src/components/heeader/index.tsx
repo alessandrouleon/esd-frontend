@@ -16,6 +16,7 @@ interface HeaderProps {
   textBtnCreate: string;
   onSearch: (searchValue: string) => void;
   handleSave: () => void;
+  handleExport: () => void;
 }
 
 export function HeaderTable({
@@ -24,7 +25,8 @@ export function HeaderTable({
   textBtnImp,
   textBtnCreate,
   onSearch,
-  handleSave
+  handleSave,
+  handleExport,
 }: HeaderProps) {
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,6 +73,7 @@ export function HeaderTable({
             sx={{
               marginRight: "0.5rem",
             }}
+            onClick={handleExport}
           >
             {textBtnExp}
           </Button>

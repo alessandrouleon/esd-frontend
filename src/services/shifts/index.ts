@@ -20,3 +20,7 @@ export const deleteShift = async (id: string) => {
 export const findManyShift = async (page: number) => {
   return await api.get(`/shifts/search/${page}`);
 };
+
+export const findAllShiftNotPanitadet = async () => {
+  return await api.get(`/shifts/allShift`);
+};

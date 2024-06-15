@@ -27,6 +27,7 @@ export function UpdateModal({
 
   const handleClose = () => {
     setOpen(false);
+    setDataRefresh(!dataRefresh);
   };
 
   const onSubmit: SubmitHandler<IFormUpdateShift> = async (data) => {

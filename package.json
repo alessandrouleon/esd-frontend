@@ -22,15 +22,18 @@
     "date-fns": "^3.6.0",
     "date-fns-timezone": "^0.1.4",
     "date-fns-tz": "^3.1.3",
+    "file-saver": "^2.0.5",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.51.5",
     "react-router-dom": "^6.23.1",
-    "styled-components": "^6.1.11"
+    "styled-components": "^6.1.11",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.7",
     "@types/jsonwebtoken": "^8.5.1",
     "@types/jwt-decode": "^3.1.0",
     "@types/react": "^18.2.66",
@@ -41,7 +44,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
-    "typescript": "^5.2.2",
+    "typescript": "^5.4.5",
     "vite": "^5.2.0"
   }
 }

@@ -61,3 +61,9 @@ export interface IDeleteModalProps {
   setDataRefresh: (refresh: boolean) => void;
   dataRefresh: boolean;
 }
+
+export interface ShiftExport {
+  code: string;
+  description: string;
+  createdAt: string;
+}

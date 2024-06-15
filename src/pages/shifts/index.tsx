@@ -5,14 +5,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { findManyShift } from "../../services/shifts";
+import { findAllShiftNotPanitadet, findManyShift } from "../../services/shifts";
 import { columns } from "./table/columns";
 import {
   IFormUpdateShift,
+  ShiftExport,
   initialShiftUpdate,
   initialStateData,
 } from "./interfaces";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { formatTime } from "../../utils/date";
 import { Grid, IconButton } from "@mui/material";
 import { COLORS } from "../../themes/colors";
@@ -24,6 +25,7 @@ import { Alert } from "../../components/alert";
 import { InitialAlertProps } from "../../components/alert/interfaces";
 import { UpdateModal } from "./modal/updateModal";
 import { DeleteModal } from "./modal/deleteModal";
+import ExportCSV from "../../utils/exportCSV";
 
 export function Shifts() {
   const [page, setPage] = useState(0);
@@ -69,6 +71,28 @@ export function Shifts() {
     setRowsPerPage(+event.target.value);
     setPage(0); // Reseta para a primeira página ao alterar o número de linhas por página
   };
+
+  //Exportar todos os items da tabela de listagem.
+  const handleExport = useCallback(async () => {
+    try {
+      const response = await findAllShiftNotPanitadet();
+      if (response.status === 200) {
+        console.log("aqui::", response.data);
+        const parseData = response.data.map((item: ShiftExport) => ({
+          Código: item.code,
+          Descrição: item.description,
+          "Data de criação": formatTime(item.createdAt),
+        }));
+        ExportCSV(parseData, "Lista de Turnos");
+      }
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: "Erro ao emitir relatório de turnos",
+        type: "error",
+      });
+    }
+  }, []);
 
   const fetchData = async (page: number) => {
     try {
@@ -138,6 +162,7 @@ export function Shifts() {
         titleModule="Turno"
         onSearch={handleSearch}
         textBtnExp="Exportar"
+        handleExport={handleExport}
         textBtnImp="Importar"
         textBtnCreate="Novo Turno"
         handleSave={handleOpen}
