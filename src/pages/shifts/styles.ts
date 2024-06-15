@@ -46,3 +46,14 @@ export const FormModal = styled.form`
     margin-right: 0.2rem;
   }
 `;
+
+
+export const FormFooter = styled.div`
+  display: flex;
+  margin-top: 40px;
+  justify-content: flex-end;
+
+  button:nth-child(1) {
+    margin-right: 25px;
+  }
+`;

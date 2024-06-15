@@ -23,6 +23,7 @@ import { CreateModal } from "./modal/createModal";
 import { Alert } from "../../components/alert";
 import { InitialAlertProps } from "../../components/alert/interfaces";
 import { UpdateModal } from "./modal/updateModal";
+import { DeleteModal } from "./modal/deleteModal";
 
 export function Shifts() {
   const [page, setPage] = useState(0);
@@ -34,6 +35,7 @@ export function Shifts() {
   const [shift, setShift] = useState<IFormUpdateShift>(initialShiftUpdate);
 
   const [openUpdate, setOpenUpdate] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchValue, setSearchValue] = useState("");
   const [selectedRow, setSelectedRow] = useState<string | null>(null);
@@ -52,6 +54,12 @@ export function Shifts() {
   const handleUpdate = (item: IFormUpdateShift) => {
     setShift(item);
     setOpenUpdate(!openUpdate);
+    setSelectedRow(item.id);
+  };
+
+  const handleOpenDelete = (item: IFormUpdateShift) => {
+    setShift(item);
+    setOpenDelete(!openDelete);
     setSelectedRow(item.id);
   };
 
@@ -109,6 +117,17 @@ export function Shifts() {
           shift={shift}
           open={openUpdate}
           setOpen={setOpenUpdate}
+          setAlert={setAlert}
+          setDataRefresh={setDataRefresh}
+          dataRefresh={dataRefresh}
+        />
+      )}
+
+      {openDelete && (
+        <DeleteModal
+          shift={shift}
+          open={openDelete}
+          setOpen={setOpenDelete}
           setAlert={setAlert}
           setDataRefresh={setDataRefresh}
           dataRefresh={dataRefresh}
@@ -178,7 +197,10 @@ export function Shifts() {
                               </IconButton>
                             </Grid>
                             <Grid item>
-                              <IconButton size="small" onClick={() => {}}>
+                              <IconButton
+                                size="small"
+                                onClick={() => handleOpenDelete(shift)}
+                              >
                                 <DeleteOutlineIcon />
                               </IconButton>
                             </Grid>
