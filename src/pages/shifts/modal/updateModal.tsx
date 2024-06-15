@@ -1,13 +1,8 @@
-import {
-  TextField,
-  Box,
-  Grid,
-  Button,
-} from "@mui/material";
+import { TextField, Box, Grid, Button } from "@mui/material";
 import axios from "axios";
-import  {useState}  from "react";
+
 import { DefaultValues, SubmitHandler, useForm } from "react-hook-form";
-import {IEditModalProps, IFormUpdateShift} from "../interfaces";
+import { IEditModalProps, IFormUpdateShift } from "../interfaces";
 import { FormModal } from "../styles";
 import { updateShift } from "../../../services/shifts";
 import DialogContainer from "../../../components/dialog";
@@ -20,12 +15,13 @@ export function UpdateModal({
   dataRefresh,
   shift,
 }: IEditModalProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [loading, setLoading] = useState(false);
   const defaultValues: DefaultValues<IFormUpdateShift> = shift;
 
-
-  const { register, handleSubmit, formState: { errors } } = useForm<IFormUpdateShift>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFormUpdateShift>({
     defaultValues,
   });
 
@@ -35,13 +31,11 @@ export function UpdateModal({
 
   const onSubmit: SubmitHandler<IFormUpdateShift> = async (data) => {
     try {
-      setLoading(true);
       const response = await updateShift(shift.id, data);
 
       if (response.status === 200) {
         setDataRefresh(!dataRefresh);
         setOpen(false);
-        setLoading(false);
         setAlert({
           open: true,
           message: "Turno alterado com sucesso",
@@ -59,7 +53,6 @@ export function UpdateModal({
       }
     }
   };
-
 
   return (
     <DialogContainer
@@ -126,7 +119,7 @@ export function UpdateModal({
         >
           <Button onClick={handleClose}>Cancelar</Button>
           <Button sx={{ ml: 2 }} variant="contained" type="submit">
-            Salvar
+           Salvar
           </Button>
         </Box>
       </FormModal>

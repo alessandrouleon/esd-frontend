@@ -36,6 +36,7 @@ export function Shifts() {
   const [openUpdate, setOpenUpdate] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchValue, setSearchValue] = useState("");
+  const [selectedRow, setSelectedRow] = useState<string | null>(null);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSearch = (value: any) => {
@@ -51,6 +52,7 @@ export function Shifts() {
   const handleUpdate = (item: IFormUpdateShift) => {
     setShift(item);
     setOpenUpdate(!openUpdate);
+    setSelectedRow(item.id);
   };
 
   const handleChangeRowsPerPage = (
@@ -79,6 +81,7 @@ export function Shifts() {
 
   useEffect(() => {
     fetchData(page);
+    setSelectedRow(null);
   }, [page, dataRefresh]);
 
   return (
@@ -142,7 +145,19 @@ export function Shifts() {
           <TableBody>
             {data.shifts.map((shift) => {
               return (
-                <TableRow hover role="checkbox" tabIndex={-1} key={shift.id}>
+                <TableRow
+                  hover
+                  role="checkbox"
+                  tabIndex={-1}
+                  key={shift.id}
+                  sx={{
+                    backgroundColor:
+                      selectedRow === shift.id ? COLORS.PRIMARY_50 : "inherit",
+                    "&:hover": {
+                      backgroundColor: COLORS.PRIMARY_50,
+                    },
+                  }}
+                >
                   {columns.map((column) => {
                     const value = shift[column.id];
                     return (
