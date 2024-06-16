@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect } from "react";
 import {
   Button,
   Grid,
@@ -6,7 +7,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import { COLORS } from "../../themes/colors";
 
 interface HeaderProps {
@@ -28,11 +29,24 @@ export function HeaderTable({
   handleSave,
   handleExport,
 }: HeaderProps) {
+  const [searchValue, setSearchValue] = React.useState("");
 
-    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const searchValue = event.target.value;
-        onSearch(searchValue); // Chama a função onSearch com o valor da pesquisa
-      };
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setSearchValue(value);
+    onSearch(value);
+  };
+
+  const handleClearSearch = useCallback(() => {
+    setSearchValue("");
+    onSearch("");
+  }, [onSearch]);
+
+  useEffect(() => {
+    if (searchValue === "") {
+      handleClearSearch();
+    }
+  }, [searchValue, handleClearSearch]);
 
   return (
     <>
@@ -55,16 +69,17 @@ export function HeaderTable({
               "& .MuiOutlinedInput-root": { borderRadius: "6rem" },
               width: 400,
             }}
+            value={searchValue}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end" sx={{ pr: 1 }}>
-                  <IconButton edge="end">
-                    <SearchIcon />
+                  <IconButton edge="end" onClick={handleClearSearch}>
+                    <CleaningServicesIcon />
                   </IconButton>
                 </InputAdornment>
               ),
             }}
-            onChange={handleSearch} // Chama handleSearch no evento onChange
+            onChange={handleSearch}
           />
         </Grid>
         <Grid item style={{ textAlign: "right" }}>
@@ -85,7 +100,9 @@ export function HeaderTable({
           >
             {textBtnImp}
           </Button>
-          <Button variant="contained" onClick={handleSave}>{textBtnCreate}</Button>
+          <Button variant="contained" onClick={handleSave}>
+            {textBtnCreate}
+          </Button>
         </Grid>
       </Grid>
     </>

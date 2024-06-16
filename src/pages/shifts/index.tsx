@@ -5,7 +5,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { findAllShiftNotPanitadet, findManyShift } from "../../services/shifts";
+import {
+  findAllShiftNotPanitadet,
+  findManyShift,
+  searchForShift,
+} from "../../services/shifts";
 import { columns } from "./table/columns";
 import {
   IFormUpdateShift,
@@ -13,9 +17,9 @@ import {
   initialShiftUpdate,
   initialStateData,
 } from "./interfaces";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { formatTime } from "../../utils/date";
-import { Grid, IconButton } from "@mui/material";
+import { Grid, IconButton, debounce } from "@mui/material";
 import { COLORS } from "../../themes/colors";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -35,16 +39,15 @@ export function Shifts() {
   const [dataRefresh, setDataRefresh] = useState(false);
   const [alert, setAlert] = useState(InitialAlertProps);
   const [shift, setShift] = useState<IFormUpdateShift>(initialShiftUpdate);
-
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchValue, setSearchValue] = useState("");
   const [selectedRow, setSelectedRow] = useState<string | null>(null);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSearch = (value: any) => {
-    setSearchValue(value);
+
+
+  const handleSearch = (value: string) => {
+    debouncedSearch(value);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -69,7 +72,7 @@ export function Shifts() {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setRowsPerPage(+event.target.value);
-    setPage(0); // Reseta para a primeira página ao alterar o número de linhas por página
+    setPage(page + 1);
   };
 
   //Exportar todos os items da tabela de listagem.
@@ -111,10 +114,43 @@ export function Shifts() {
     }
   };
 
+  const searchData = useCallback(
+    async (page: number) => {
+      try {
+        const response = await searchForShift(page, searchValue);
+        setData({
+          shifts: response.data.shifts,
+          total: response.data.total,
+          currentPage: response.data.currentPage,
+          nextPage: response.data.nextPage,
+          prevPage: response.data.prevPage,
+          lastPage: response.data.lastPage,
+        });
+        setDataRefresh(true);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
+    [searchValue]
+  );
+
+  //Função usada no seach
+  const debouncedSearch = useMemo(() =>
+    debounce((value: string) => {
+      setSearchValue(value);
+      searchData(0);
+    }, 500),
+    [setSearchValue, searchData]
+  );
+
   useEffect(() => {
-    fetchData(page);
+    if (searchValue === "") {
+      fetchData(page + 1);
+    } else {
+      searchData(page + 1);
+    }
     setSelectedRow(null);
-  }, [page, dataRefresh]);
+  }, [page, searchValue, dataRefresh, searchData]);
 
   return (
     <>

@@ -21,6 +21,10 @@ export const findManyShift = async (page: number) => {
   return await api.get(`/shifts/search/${page}`);
 };
 
+export const searchForShift = async (page: number, value: string) => {
+  return await api.get(`/shifts/search/${page}?value=${value}`);
+};
+
 export const findAllShiftNotPanitadet = async () => {
   return await api.get(`/shifts/allShift`);
 };
