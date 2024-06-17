@@ -30,20 +30,20 @@ export interface LineProps {
     description: string;
   }
   
-  export interface IFormLine {
+  export interface IFormUpdateLine {
     id: string;
     code: string;
     description: string;
   }
   
-  export const initialLine: IFormLine = {
+  export const initialUpdateLine: IFormUpdateLine = {
     id: '',
     code: '',
     description: ''
   };
   
   export interface IEditModalProps {
-    line: IFormLine;
+    line: IFormUpdateLine;
     open: boolean;
     setOpen: (open: boolean) => void;
     setAlert: (data: { open: boolean; message: string; type: 'error' | 'success' }) => void;
@@ -54,7 +54,7 @@ export interface LineProps {
   
   
   export interface IDeleteModalProps {
-    line: IFormLine;
+    line: IFormUpdateLine;
     open: boolean;
     setOpen: (open: boolean) => void;
     setAlert: (data: { open: boolean; message: string; type: 'error' | 'success' }) => void;

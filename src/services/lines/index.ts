@@ -1,4 +1,5 @@
 // import { IFormUpdateShift } from "../../pages/shifts/interfaces";
+import { IFormUpdateLine } from "../../pages/lines/interfaces";
 import api from "../api";
 // import { UserToken } from "../localStorage";
 import { ILinesProps } from "./interfaces";
@@ -7,12 +8,12 @@ export const createLine = async (data: ILinesProps) => {
   return await api.post(`/lines/`, data);
 };
 
-// export const updateShift = async (id: string, data: IFormUpdateShift) => {
-//   return await api.patch(`/shifts/${id}`, {
-//     code: data.code.trim(),
-//     description: data.description.trim(),
-//   });
-// };
+export const updateLine = async (id: string, data: IFormUpdateLine) => {
+  return await api.patch(`/lines/${id}`, {
+    code: data.code.trim(),
+    description: data.description.trim(),
+  });
+};
 
 // export const deleteShift = async (id: string) => {
 //   return await api.delete(`/shifts/${id}`);

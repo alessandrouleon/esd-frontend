@@ -1,47 +1,45 @@
 import { TextField, Box, Grid, Button } from "@mui/material";
 import axios from "axios";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { IFormCreateLine } from "../interfaces";
-import DialogContainer from "../../../components/dialog";
-import { FormModal } from "../styles";
-import { ICreateModalProps } from "../../../components/dialog/styles";
-import { createLine } from "../../../services/lines";
 
-export function CreateModal({
+import { DefaultValues, SubmitHandler, useForm } from "react-hook-form";
+import { IEditModalProps, IFormUpdateLine } from "../interfaces";
+import { FormModal } from "../styles";
+import { updateLine } from "../../../services/lines";
+import DialogContainer from "../../../components/dialog";
+
+export function UpdateModal({
   open,
   setOpen,
   setAlert,
   setDataRefresh,
   dataRefresh,
-  setPage,
-}: ICreateModalProps) {
-  const handleClose = () => {
-    setOpen(false);
-  };
+  line,
+}: IEditModalProps) {
+  const defaultValues: DefaultValues<IFormUpdateLine> = line;
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
-  } = useForm<IFormCreateLine>({
-    defaultValues: {
-      code: "",
-      description: "",
-    },
+  } = useForm<IFormUpdateLine>({
+    defaultValues,
   });
 
-  const onSubmit: SubmitHandler<IFormCreateLine> = async (data) => {
+  const handleClose = () => {
+    setOpen(false);
+    setDataRefresh(!dataRefresh);
+  };
+
+  const onSubmit: SubmitHandler<IFormUpdateLine> = async (data) => {
     try {
-      const response = await createLine(data);
-      if (response.status === 201) {
-        setPage(0);
+      const response = await updateLine(line.id, data);
+
+      if (response.status === 200) {
         setDataRefresh(!dataRefresh);
         setOpen(false);
-        reset();
         setAlert({
           open: true,
-          message: "Linha cadastrada com sucesso.",
+          message: "Line alterada com sucesso",
           type: "success",
         });
       }
@@ -60,8 +58,8 @@ export function CreateModal({
   return (
     <DialogContainer
       open={open}
-      title="Cadastrar linha"
-      subtitle="Preencha o formulário de linha."
+      title="Editar Linha"
+      subtitle="Edite o formulário de linha."
     >
       <FormModal onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
@@ -112,6 +110,7 @@ export function CreateModal({
             />
           </Grid>
         </Grid>
+
         <Box
           style={{
             display: "flex",
@@ -121,7 +120,7 @@ export function CreateModal({
         >
           <Button onClick={handleClose}>Cancelar</Button>
           <Button sx={{ ml: 2 }} variant="contained" type="submit">
-            Cadastra
+           Salvar
           </Button>
         </Box>
       </FormModal>
