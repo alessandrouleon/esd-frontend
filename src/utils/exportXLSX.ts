@@ -1,16 +1,16 @@
 import FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 
-interface CsvData {
+interface XlsxData {
   [key: string]: string | number | boolean | null;
 }
 
-export default function ExportCSV(csvData: CsvData[], fileName: string): void {
+export default function ExportXLSX(xlsxData: XlsxData[], fileName: string): void {
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
 
-  const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(csvData);
+  const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(xlsxData);
   // Definir a largura das colunas
   ws["!cols"] = [
     { wch: 20 },

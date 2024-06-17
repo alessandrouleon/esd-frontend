@@ -9,6 +9,7 @@ import {
   findAllShiftNotPanitadet,
   findManyShift,
   searchForShift,
+  uploadShift,
 } from "../../services/shifts";
 import { columns } from "./table/columns";
 import {
@@ -17,9 +18,18 @@ import {
   initialShiftUpdate,
   initialStateData,
 } from "./interfaces";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+   useMemo,
+  useState,
+} from "react";
 import { formatTime } from "../../utils/date";
-import { Grid, IconButton, debounce } from "@mui/material";
+import {
+  Grid,
+  IconButton,
+  debounce
+} from "@mui/material";
 import { COLORS } from "../../themes/colors";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -29,7 +39,8 @@ import { Alert } from "../../components/alert";
 import { InitialAlertProps } from "../../components/alert/interfaces";
 import { UpdateModal } from "./modal/updateModal";
 import { DeleteModal } from "./modal/deleteModal";
-import ExportCSV from "../../utils/exportCSV";
+import ExportXLSX from "../../utils/exportXLSX";
+import axios from "axios";
 
 export function Shifts() {
   const [page, setPage] = useState(0);
@@ -45,9 +56,8 @@ export function Shifts() {
   const [selectedRow, setSelectedRow] = useState<string | null>(null);
 
 
-
   const handleSearch = (value: string) => {
-    debouncedSearch(value);
+     debouncedSearch(value);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -80,13 +90,12 @@ export function Shifts() {
     try {
       const response = await findAllShiftNotPanitadet();
       if (response.status === 200) {
-        console.log("aqui::", response.data);
         const parseData = response.data.map((item: ShiftExport) => ({
           Código: item.code,
           Descrição: item.description,
           "Data de criação": formatTime(item.createdAt),
         }));
-        ExportCSV(parseData, "Lista de Turnos");
+        ExportXLSX(parseData, "Lista de Turnos");
       }
     } catch (error) {
       setAlert({
@@ -96,6 +105,40 @@ export function Shifts() {
       });
     }
   }, []);
+
+  //Inport file
+  const handleUploadShift = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    try {
+      const response = await uploadShift(file);
+      if (response && (response.status === 201 || response.status === 200)) {
+        setAlert({
+          open: true,
+          message: "Upload turno realizado com sucesso.",
+          type: "success",
+        });
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const { message } = error.response.data;
+        setAlert({
+          open: true,
+          message: message || "Internal server error",
+          type: "error",
+        });
+      } else {
+        setAlert({
+          open: true,
+          message: "Erro ao emitir relatório de turnos",
+          type: "error",
+        });
+      }
+    }
+  };
 
   const fetchData = async (page: number) => {
     try {
@@ -108,7 +151,7 @@ export function Shifts() {
         prevPage: response.data.prevPage,
         lastPage: response.data.lastPage,
       });
-      setDataRefresh(true);
+      setDataRefresh(false);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -126,7 +169,7 @@ export function Shifts() {
           prevPage: response.data.prevPage,
           lastPage: response.data.lastPage,
         });
-        setDataRefresh(true);
+        setDataRefresh(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -135,14 +178,14 @@ export function Shifts() {
   );
 
   //Função usada no seach
-  const debouncedSearch = useMemo(() =>
-    debounce((value: string) => {
-      setSearchValue(value);
-      searchData(0);
-    }, 500),
-    [setSearchValue, searchData]
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        setSearchValue(value);
+      }, 500),
+    [setSearchValue]
   );
-
+ 
   useEffect(() => {
     if (searchValue === "") {
       fetchData(page + 1);
@@ -200,6 +243,7 @@ export function Shifts() {
         textBtnExp="Exportar"
         handleExport={handleExport}
         textBtnImp="Importar"
+        onUpload={handleUploadShift}
         textBtnCreate="Novo Turno"
         handleSave={handleOpen}
       />

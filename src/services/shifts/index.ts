@@ -1,5 +1,6 @@
 import { IFormUpdateShift } from "../../pages/shifts/interfaces";
 import api from "../api";
+import { UserToken } from "../localStorage";
 import { ICreateShift } from "./interfaces";
 
 export const createShift = async (data: ICreateShift) => {
@@ -28,3 +29,18 @@ export const searchForShift = async (page: number, value: string) => {
 export const findAllShiftNotPanitadet = async () => {
   return await api.get(`/shifts/allShift`);
 };
+
+export async function uploadShift(file: File) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const token = UserToken.getLocalStorageToken();
+
+  return await api.post("/shifts/upload/file", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+

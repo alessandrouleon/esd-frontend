@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import {
   Button,
   Grid,
@@ -18,6 +18,7 @@ interface HeaderProps {
   onSearch: (searchValue: string) => void;
   handleSave: () => void;
   handleExport: () => void;
+  onUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export function HeaderTable({
@@ -28,8 +29,10 @@ export function HeaderTable({
   onSearch,
   handleSave,
   handleExport,
+  onUpload,
 }: HeaderProps) {
   const [searchValue, setSearchValue] = React.useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -47,6 +50,22 @@ export function HeaderTable({
       handleClearSearch();
     }
   }, [searchValue, handleClearSearch]);
+
+  const handleClickImport = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+ 
+  const clearSearchButton = (
+    <IconButton
+      edge="end"
+      onClick={handleClearSearch}
+      disabled={searchValue.trim().length === 0}
+    >
+      <CleaningServicesIcon />
+    </IconButton>
+  );
 
   return (
     <>
@@ -73,9 +92,7 @@ export function HeaderTable({
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end" sx={{ pr: 1 }}>
-                  <IconButton edge="end" onClick={handleClearSearch}>
-                    <CleaningServicesIcon />
-                  </IconButton>
+                   {clearSearchButton}
                 </InputAdornment>
               ),
             }}
@@ -94,12 +111,23 @@ export function HeaderTable({
           </Button>
           <Button
             variant="outlined"
+            onClick={handleClickImport}
             sx={{
               marginRight: "0.5rem",
             }}
           >
             {textBtnImp}
           </Button>
+          <input
+            hidden
+            ref={fileInputRef}
+            accept=".xlsx"
+            type="file"
+            onChange={(event) => {
+              onUpload(event);
+              event.currentTarget.value = "";
+            }}
+          />
           <Button variant="contained" onClick={handleSave}>
             {textBtnCreate}
           </Button>
