@@ -20,7 +20,7 @@ import { COLORS } from "../../themes/colors";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Toolbar } from "../../components/toolbar";
-// import { CreateModal } from "./modal/createModal";
+ import { CreateModalLine } from "./modal/createModal";
 import { Alert } from "../../components/alert";
 import { InitialAlertProps } from "../../components/alert/interfaces";
 // import { UpdateModal } from "./modal/updateModal";
@@ -193,8 +193,8 @@ export function Lines() {
         type={alert.type}
       />
 
-      {/* {open && (
-        <CreateModal
+      {open && (
+        <CreateModalLine
           open={open}
           setOpen={setOpen}
           setPage={setPage}
@@ -202,7 +202,7 @@ export function Lines() {
           dataRefresh={dataRefresh}
           setAlert={setAlert}
         />
-      )} */}
+      )}
 
       {/* {openUpdate && (
         <UpdateModal
