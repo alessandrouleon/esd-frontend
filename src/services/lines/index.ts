@@ -15,9 +15,9 @@ export const updateLine = async (id: string, data: IFormUpdateLine) => {
   });
 };
 
-// export const deleteShift = async (id: string) => {
-//   return await api.delete(`/shifts/${id}`);
-// };
+export const deleteLine = async (id: string) => {
+  return await api.delete(`/lines/${id}`);
+};
 
 export const findManyLines = async (page: number) => {
   return await api.get(`/lines/search/${page}`);

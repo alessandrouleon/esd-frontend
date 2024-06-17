@@ -8,9 +8,9 @@ import TableRow from "@mui/material/TableRow";
 import { findManyLines, searchForLines } from "../../services/lines";
 import { columns } from "./table/columns";
 import {
-    IFormUpdateLine,
-    // ShiftExport,
-    initialUpdateLine,
+  IFormUpdateLine,
+  // ShiftExport,
+  initialUpdateLine,
   initialLineData,
 } from "./interfaces";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -20,11 +20,11 @@ import { COLORS } from "../../themes/colors";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Toolbar } from "../../components/toolbar";
- import { CreateModal } from "./modal/createModal";
+import { CreateModal } from "./modal/createModal";
 import { Alert } from "../../components/alert";
 import { InitialAlertProps } from "../../components/alert/interfaces";
 import { UpdateModal } from "./modal/updateModal";
-// import { DeleteModal } from "./modal/deleteModal";
+import { DeleteModal } from "./modal/deleteModal";
 // import ExportXLSX from "../../utils/exportXLSX";
 // import axios from "axios";
 
@@ -36,13 +36,13 @@ export function Lines() {
   const [dataRefresh, setDataRefresh] = useState(false);
   const [alert, setAlert] = useState(InitialAlertProps);
   const [line, setLine] = useState<IFormUpdateLine>(initialUpdateLine);
-    const [openUpdate, setOpenUpdate] = useState(false);
-  //   const [openDelete, setOpenDelete] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [selectedRow, setSelectedRow] = useState<string | null>(null);
 
   const handleSearch = (value: string) => {
-     debouncedSearch(value);
+    debouncedSearch(value);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -51,17 +51,17 @@ export function Lines() {
 
   const handleOpen = () => setOpen(!open);
 
-    const handleUpdate = (item: IFormUpdateLine) => {
+  const handleUpdate = (item: IFormUpdateLine) => {
+    setLine(item);
+    setOpenUpdate(!openUpdate);
+    setSelectedRow(item.id);
+  };
+
+    const handleOpenDelete = (item: IFormUpdateLine) => {
       setLine(item);
-      setOpenUpdate(!openUpdate);
+      setOpenDelete(!openDelete);
       setSelectedRow(item.id);
     };
-
-  //   const handleOpenDelete = (item: IFormUpdateShift) => {
-  //     setShift(item);
-  //     setOpenDelete(!openDelete);
-  //     setSelectedRow(item.id);
-  //   };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -165,13 +165,13 @@ export function Lines() {
   );
 
   //Função usada no seach
-    const debouncedSearch = useMemo(
-      () =>
-        debounce((value: string) => {
-          setSearchValue(value);
-        }, 500),
-      [setSearchValue]
-    );
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        setSearchValue(value);
+      }, 500),
+    [setSearchValue]
+  );
 
   useEffect(() => {
     if (searchValue === "") {
@@ -213,16 +213,16 @@ export function Lines() {
         />
       )}
 
-      {/* {openDelete && (
+      {openDelete && (
         <DeleteModal
-          shift={shift}
+          line={line}
           open={openDelete}
           setOpen={setOpenDelete}
           setAlert={setAlert}
           setDataRefresh={setDataRefresh}
           dataRefresh={dataRefresh}
         />
-      )} */}
+      )}
 
       {/* <Toolbar
         titleModule="Turno"
@@ -294,7 +294,7 @@ export function Lines() {
                             <Grid item>
                               <IconButton
                                 size="small"
-                                 onClick={() => handleUpdate(line)}
+                                onClick={() => handleUpdate(line)}
                               >
                                 <EditIcon />
                               </IconButton>
@@ -302,8 +302,7 @@ export function Lines() {
                             <Grid item>
                               <IconButton
                                 size="small"
-                                // onClick={() => handleOpenDelete(shift)}
-                                onClick={() => {}}
+                               onClick={() => handleOpenDelete(line)}
                               >
                                 <DeleteOutlineIcon />
                               </IconButton>
