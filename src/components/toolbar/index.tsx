@@ -21,7 +21,7 @@ interface HeaderProps {
   onUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function HeaderTable({
+export function Toolbar({
   titleModule,
   textBtnExp,
   textBtnImp,

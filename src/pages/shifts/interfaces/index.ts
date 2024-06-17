@@ -1,4 +1,4 @@
-export interface Shift {
+export interface ShiftProps {
   id: string;
   code: string;
   description: string;
@@ -6,8 +6,8 @@ export interface Shift {
   actions: string;
 }
 
-interface IUpData {
-  shifts: Shift[];
+interface IShiftData{
+  shifts: ShiftProps[];
   total: number;
   currentPage: number;
   nextPage: number | null;
@@ -15,7 +15,7 @@ interface IUpData {
   lastPage: number;
 }
 
-export const initialStateData: IUpData = {
+export const initialStateData: IShiftData = {
   shifts: [],
   total: 0,
   currentPage: 1,

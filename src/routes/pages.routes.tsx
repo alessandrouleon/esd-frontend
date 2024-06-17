@@ -1,9 +1,11 @@
 import Diversity2Icon from "@mui/icons-material/Diversity2";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
 import SpaceDashboardIcon  from "@mui/icons-material/SpaceDashboard";
+import TimelineIcon from '@mui/icons-material/Timeline';
 import { Shifts } from "../pages/shifts";
 import { Departments } from "../pages/departments";
 import { Dashboards } from "../pages/dashboards/inde";
+import { Lines } from "../pages/lines";
 
 export const APP_PAGES = [
   {
@@ -14,6 +16,13 @@ export const APP_PAGES = [
     showMenu: true,
   },
   {
+    title: "Departamento",
+    route: "/department",
+    icon: <Diversity2Icon />,
+    component: <Departments />,
+    showMenu: true,
+  },
+  {
     title: "Turno",
     route: "/turno",
     icon: <NightsStayIcon />,
@@ -21,10 +30,11 @@ export const APP_PAGES = [
     showMenu: true,
   },
   {
-    title: "Departamento",
-    route: "/department",
-    icon: <Diversity2Icon />,
-    component: <Departments />,
+    title: "Linha",
+    route: "/line",
+    icon: <TimelineIcon />,
+    component: <Lines />,
     showMenu: true,
   },
+  
 ];

@@ -5,57 +5,44 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import {
-  findAllShiftNotPanitadet,
-  findManyShift,
-  searchForShift,
-  uploadShift,
-} from "../../services/shifts";
+import { findManyLines, searchForLines } from "../../services/lines";
 import { columns } from "./table/columns";
 import {
-  IFormUpdateShift,
-  ShiftExport,
-  initialShiftUpdate,
-  initialStateData,
+  //   IFormUpdateShift,
+  //   ShiftExport,
+  //   initialShiftUpdate,
+  initialLineData,
 } from "./interfaces";
-import {
-  useCallback,
-  useEffect,
-   useMemo,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { formatTime } from "../../utils/date";
-import {
-  Grid,
-  IconButton,
-  debounce
-} from "@mui/material";
+import { Grid, IconButton, debounce } from "@mui/material";
 import { COLORS } from "../../themes/colors";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Toolbar } from "../../components/toolbar";
-import { CreateModal } from "./modal/createModal";
+// import { CreateModal } from "./modal/createModal";
 import { Alert } from "../../components/alert";
 import { InitialAlertProps } from "../../components/alert/interfaces";
-import { UpdateModal } from "./modal/updateModal";
-import { DeleteModal } from "./modal/deleteModal";
-import ExportXLSX from "../../utils/exportXLSX";
-import axios from "axios";
+// import { UpdateModal } from "./modal/updateModal";
+// import { DeleteModal } from "./modal/deleteModal";
+// import ExportXLSX from "../../utils/exportXLSX";
+// import axios from "axios";
 
-export function Shifts() {
+export function Lines() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(11);
-  const [data, setData] = useState(initialStateData);
+  const [data, setData] = useState(initialLineData);
   const [open, setOpen] = useState(false);
   const [dataRefresh, setDataRefresh] = useState(false);
   const [alert, setAlert] = useState(InitialAlertProps);
-  const [shift, setShift] = useState<IFormUpdateShift>(initialShiftUpdate);
-  const [openUpdate, setOpenUpdate] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
+  //const [shift, setShift] = useState<IFormUpdateShift>(initialShiftUpdate);
+  //   const [openUpdate, setOpenUpdate] = useState(false);
+  //   const [openDelete, setOpenDelete] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchValue, setSearchValue] = useState("");
   const [selectedRow, setSelectedRow] = useState<string | null>(null);
 
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSearch = (value: string) => {
      debouncedSearch(value);
   };
@@ -66,17 +53,17 @@ export function Shifts() {
 
   const handleOpen = () => setOpen(!open);
 
-  const handleUpdate = (item: IFormUpdateShift) => {
-    setShift(item);
-    setOpenUpdate(!openUpdate);
-    setSelectedRow(item.id);
-  };
+  //   const handleUpdate = (item: IFormUpdateShift) => {
+  //     setShift(item);
+  //     setOpenUpdate(!openUpdate);
+  //     setSelectedRow(item.id);
+  //   };
 
-  const handleOpenDelete = (item: IFormUpdateShift) => {
-    setShift(item);
-    setOpenDelete(!openDelete);
-    setSelectedRow(item.id);
-  };
+  //   const handleOpenDelete = (item: IFormUpdateShift) => {
+  //     setShift(item);
+  //     setOpenDelete(!openDelete);
+  //     setSelectedRow(item.id);
+  //   };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -86,65 +73,67 @@ export function Shifts() {
   };
 
   //Exportar todos os items da tabela de listagem.
-  const handleExport = useCallback(async () => {
-    try {
-      const response = await findAllShiftNotPanitadet();
-      if (response.status === 200) {
-        const parseData = response.data.map((item: ShiftExport) => ({
-          Código: item.code,
-          Descrição: item.description,
-          "Data de criação": formatTime(item.createdAt),
-        }));
-        ExportXLSX(parseData, "Lista de Turnos");
-      }
-    } catch (error) {
-      setAlert({
-        open: true,
-        message: "Erro ao emitir relatório de turnos",
-        type: "error",
-      });
-    }
-  }, []);
+  //   const handleExport = useCallback(async () => {
+  //     try {
+  //       const response = await findAllShiftNotPanitadet();
+  //       if (response.status === 200) {
+  //         const parseData = response.data.map((item: ShiftExport) => ({
+  //           Código: item.code,
+  //           Descrição: item.description,
+  //           "Data de criação": formatTime(item.createdAt),
+  //         }));
+  //         ExportXLSX(parseData, "Lista de Turnos");
+  //       }
+  //     } catch (error) {
+  //       setAlert({
+  //         open: true,
+  //         message: "Erro ao emitir relatório de turnos",
+  //         type: "error",
+  //       });
+  //     }
+  //   }, []);
 
   //Inport file
-  const handleUploadShift = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = event.target.files;
-    if (!files || files.length === 0) return;
-    const file = files[0];
-    try {
-      const response = await uploadShift(file);
-      if (response && (response.status === 201 || response.status === 200)) {
-        setAlert({
-          open: true,
-          message: "Upload turno realizado com sucesso.",
-          type: "success",
-        });
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        const { message } = error.response.data;
-        setAlert({
-          open: true,
-          message: message || "Internal server error",
-          type: "error",
-        });
-      } else {
-        setAlert({
-          open: true,
-          message: "Erro ao emitir relatório de turnos",
-          type: "error",
-        });
-      }
-    }
-  };
+  //   const handleUploadShift = async (
+  //     event: React.ChangeEvent<HTMLInputElement>
+  //   ) => {
+  //     const files = event.target.files;
+  //     if (!files || files.length === 0) return;
+  //     const file = files[0];
+  //     try {
+  //       const response = await uploadShift(file);
+  //       if (response && (response.status === 201 || response.status === 200)) {
+  //         setAlert({
+  //           open: true,
+  //           message: "Upload turno realizado com sucesso.",
+  //           type: "success",
+  //         });
+  //       }
+  //     } catch (error) {
+  //       if (axios.isAxiosError(error) && error.response) {
+  //         const { message } = error.response.data;
+  //         setAlert({
+  //           open: true,
+  //           message: message || "Internal server error",
+  //           type: "error",
+  //         });
+  //       } else {
+  //         setAlert({
+  //           open: true,
+  //           message: "Erro ao emitir relatório de turnos",
+  //           type: "error",
+  //         });
+  //       }
+  //     }
+  //   };
 
   const fetchData = async (page: number) => {
     try {
-      const response = await findManyShift(page);
+      const response = await findManyLines(page);
+      console.log("linhas,", response.data.lines);
+
       setData({
-        shifts: response.data.shifts,
+        lines: response.data.lines,
         total: response.data.total,
         currentPage: response.data.currentPage,
         nextPage: response.data.nextPage,
@@ -160,9 +149,9 @@ export function Shifts() {
   const searchData = useCallback(
     async (page: number) => {
       try {
-        const response = await searchForShift(page, searchValue);
+        const response = await searchForLines(page, searchValue);
         setData({
-          shifts: response.data.shifts,
+          lines: response.data.lines,
           total: response.data.total,
           currentPage: response.data.currentPage,
           nextPage: response.data.nextPage,
@@ -178,14 +167,14 @@ export function Shifts() {
   );
 
   //Função usada no seach
-  const debouncedSearch = useMemo(
-    () =>
-      debounce((value: string) => {
-        setSearchValue(value);
-      }, 500),
-    [setSearchValue]
-  );
- 
+    const debouncedSearch = useMemo(
+      () =>
+        debounce((value: string) => {
+          setSearchValue(value);
+        }, 500),
+      [setSearchValue]
+    );
+
   useEffect(() => {
     if (searchValue === "") {
       fetchData(page + 1);
@@ -193,7 +182,7 @@ export function Shifts() {
       searchData(page + 1);
     }
     setSelectedRow(null);
-  }, [page, searchValue, dataRefresh, searchData]);
+  }, [page, dataRefresh, searchValue, searchData]);
 
   return (
     <>
@@ -204,7 +193,7 @@ export function Shifts() {
         type={alert.type}
       />
 
-      {open && (
+      {/* {open && (
         <CreateModal
           open={open}
           setOpen={setOpen}
@@ -213,9 +202,9 @@ export function Shifts() {
           dataRefresh={dataRefresh}
           setAlert={setAlert}
         />
-      )}
+      )} */}
 
-      {openUpdate && (
+      {/* {openUpdate && (
         <UpdateModal
           shift={shift}
           open={openUpdate}
@@ -224,9 +213,9 @@ export function Shifts() {
           setDataRefresh={setDataRefresh}
           dataRefresh={dataRefresh}
         />
-      )}
+      )} */}
 
-      {openDelete && (
+      {/* {openDelete && (
         <DeleteModal
           shift={shift}
           open={openDelete}
@@ -235,9 +224,9 @@ export function Shifts() {
           setDataRefresh={setDataRefresh}
           dataRefresh={dataRefresh}
         />
-      )}
+      )} */}
 
-      <Toolbar
+      {/* <Toolbar
         titleModule="Turno"
         onSearch={handleSearch}
         textBtnExp="Exportar"
@@ -245,6 +234,17 @@ export function Shifts() {
         textBtnImp="Importar"
         onUpload={handleUploadShift}
         textBtnCreate="Novo Turno"
+        handleSave={handleOpen}
+      /> */}
+
+      <Toolbar
+        titleModule="Linha"
+        onSearch={handleSearch}
+        textBtnExp="Exportar"
+        handleExport={() => {}}
+        textBtnImp="Importar"
+        onUpload={() => {}}
+        textBtnCreate="Nova Linha"
         handleSave={handleOpen}
       />
 
@@ -267,23 +267,23 @@ export function Shifts() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.shifts.map((shift) => {
+            {data.lines.map((line) => {
               return (
                 <TableRow
                   hover
                   role="checkbox"
                   tabIndex={-1}
-                  key={shift.id}
+                  key={line.id}
                   sx={{
                     backgroundColor:
-                      selectedRow === shift.id ? COLORS.PRIMARY_50 : "inherit",
+                      selectedRow === line.id ? COLORS.PRIMARY_50 : "inherit",
                     "&:hover": {
                       backgroundColor: COLORS.PRIMARY_50,
                     },
                   }}
                 >
                   {columns.map((column) => {
-                    const value = shift[column.id];
+                    const value = line[column.id];
                     return (
                       <TableCell
                         key={column.id}
@@ -296,7 +296,8 @@ export function Shifts() {
                             <Grid item>
                               <IconButton
                                 size="small"
-                                onClick={() => handleUpdate(shift)}
+                                // onClick={() => handleUpdate(shift)}
+                                onClick={() => {}}
                               >
                                 <EditIcon />
                               </IconButton>
@@ -304,7 +305,8 @@ export function Shifts() {
                             <Grid item>
                               <IconButton
                                 size="small"
-                                onClick={() => handleOpenDelete(shift)}
+                                // onClick={() => handleOpenDelete(shift)}
+                                onClick={() => {}}
                               >
                                 <DeleteOutlineIcon />
                               </IconButton>

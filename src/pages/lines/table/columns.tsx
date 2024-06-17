@@ -1,6 +1,4 @@
-
-import { ShiftProps } from "../interfaces";
-
+import { LineProps } from "../interfaces";
 
 interface Column {
   id: "id" | "code" | "description" | "createdAt" | "actions";
@@ -8,12 +6,12 @@ interface Column {
   minWidth?: number;
   align?: "center";
   format?: (value: number) => string;
-  renderCell?: (params: { row: ShiftProps }) => React.ReactNode;
+  renderCell?: (params: { row: LineProps }) => React.ReactNode;
 }
 
 export const columns: readonly Column[] = [
   // { id: "id", label: "ID", minWidth: 170 },
-  { id: "code", label: "Código", minWidth: 100, align: "center", },
+  { id: "code", label: "Código", minWidth: 100, align: "center" },
   {
     id: "description",
     label: "Descrição",
