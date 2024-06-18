@@ -1,14 +1,14 @@
 import axios from "axios";
 import { useCallback } from "react";
 import { IDeleteModalProps } from "../interfaces";
+import { deleteDepartment } from "../../../services/departments";
 import DialogContainer from "../../../components/dialog";
 import { FormFooter } from "../styles";
 import { Button, Typography } from "@mui/material";
 import { COLORS } from "../../../themes/colors";
-import { deleteLine } from "../../../services/lines";
 
 export function DeleteModal({
-  line,
+  department,
   open,
   setOpen,
   setAlert,
@@ -22,14 +22,14 @@ export function DeleteModal({
 
   const handleDelete = useCallback(async () => {
     try {
-      const response = await deleteLine(line.id);
+      const response = await deleteDepartment(department.id);
 
       if (response.status === 200) {
         setDataRefresh(!dataRefresh);
         setOpen(false);
         setAlert({
           open: true,
-          message: "Linha deletada com sucesso",
+          message: "Departamento deletado com sucesso",
           type: "success",
         });
       }
@@ -43,12 +43,12 @@ export function DeleteModal({
         });
       }
     }
-  }, [line]);
+  }, [department]);
 
   return (
-    <DialogContainer open={open} titleDelete="Deletar linha" width="34rem">
+    <DialogContainer open={open} titleDelete="Deletar departamento" width="34rem">
       <Typography>
-        Deseja deletar a linha:
+        Deseja deletar o departamento:
         <span
           style={{
             color: COLORS.NEUTRAL_800,
@@ -56,7 +56,7 @@ export function DeleteModal({
             marginLeft: "0.5rem",
           }}
         >
-          {line.code}
+          {department.code}
         </span>
         ?
       </Typography>
