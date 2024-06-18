@@ -6,6 +6,7 @@ import { Shifts } from "../pages/shifts";
 import { Departments } from "../pages/departments";
 import { Dashboards } from "../pages/dashboards/inde";
 import { Lines } from "../pages/lines";
+import { Employees } from "../pages/employees";
 
 export const APP_PAGES = [
   {
@@ -16,21 +17,28 @@ export const APP_PAGES = [
     showMenu: true,
   },
   {
-    title: "Departamento",
+    title: "Departamentos",
     route: "/department",
     icon: <Diversity2Icon />,
     component: <Departments />,
     showMenu: true,
   },
   {
-    title: "Turno",
+    title: "Funcionários",
+    route: "/employee",
+    icon: <Diversity2Icon />,
+    component: <Employees />,
+    showMenu: true,
+  },
+  {
+    title: "Turnos",
     route: "/turno",
     icon: <NightsStayIcon />,
     component: <Shifts />,
     showMenu: true,
   },
   {
-    title: "Linha",
+    title: "Linhas",
     route: "/line",
     icon: <TimelineIcon />,
     component: <Lines />,
