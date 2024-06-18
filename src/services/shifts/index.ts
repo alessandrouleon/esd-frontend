@@ -26,7 +26,7 @@ export const searchForShift = async (page: number, value: string) => {
   return await api.get(`/shifts/search/${page}?value=${value}`);
 };
 
-export const findAllShiftNotPanitadet = async () => {
+export const findAllShiftNotPaginated = async () => {
   return await api.get(`/shifts/allShift`);
 };
 

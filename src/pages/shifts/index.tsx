@@ -6,7 +6,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import {
-  findAllShiftNotPanitadet,
+  findAllShiftNotPaginated,
   findManyShift,
   searchForShift,
   uploadShift,
@@ -88,7 +88,7 @@ export function Shifts() {
   //Exportar todos os items da tabela de listagem.
   const handleExport = useCallback(async () => {
     try {
-      const response = await findAllShiftNotPanitadet();
+      const response = await findAllShiftNotPaginated();
       if (response.status === 200) {
         const parseData = response.data.map((item: ShiftExport) => ({
           Código: item.code,

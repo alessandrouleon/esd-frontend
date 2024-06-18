@@ -1,7 +1,6 @@
-// import { IFormUpdateShift } from "../../pages/shifts/interfaces";
 import { IFormUpdateLine } from "../../pages/lines/interfaces";
 import api from "../api";
-// import { UserToken } from "../localStorage";
+import { UserToken } from "../localStorage";
 import { ILinesProps } from "./interfaces";
 
 export const createLine = async (data: ILinesProps) => {
@@ -27,21 +26,21 @@ export const searchForLines = async (page: number, value: string) => {
   return await api.get(`/lines/search/${page}?value=${value}`);
 };
 
-// export const findAllShiftNotPanitadet = async () => {
-//   return await api.get(`/shifts/allShift`);
-// };
+export const findAllLinesNotPaginated = async () => {
+  return await api.get(`/lines/allLines`);
+};
 
-// export async function uploadShift(file: File) {
-//   const formData = new FormData();
-//   formData.append("file", file);
+export async function uploadLine(file: File) {
+  const formData = new FormData();
+  formData.append("file", file);
 
-//   const token = UserToken.getLocalStorageToken();
+  const token = UserToken.getLocalStorageToken();
 
-//   return await api.post("/shifts/upload/file", formData, {
-//     headers: {
-//       "Content-Type": "multipart/form-data",
-//       Authorization: `Bearer ${token}`,
-//     },
-//   });
-// }
+  return await api.post("/lines/upload/file", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
 

@@ -5,13 +5,18 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { findManyLines, searchForLines } from "../../services/lines";
+import {
+  findAllLinesNotPaginated,
+  findManyLines,
+  searchForLines,
+  uploadLine,
+} from "../../services/lines";
 import { columns } from "./table/columns";
 import {
   IFormUpdateLine,
-  // ShiftExport,
   initialUpdateLine,
   initialLineData,
+  LineExport,
 } from "./interfaces";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { formatTime } from "../../utils/date";
@@ -25,8 +30,8 @@ import { Alert } from "../../components/alert";
 import { InitialAlertProps } from "../../components/alert/interfaces";
 import { UpdateModal } from "./modal/updateModal";
 import { DeleteModal } from "./modal/deleteModal";
-// import ExportXLSX from "../../utils/exportXLSX";
-// import axios from "axios";
+import ExportXLSX from "../../utils/exportXLSX";
+import axios from "axios";
 
 export function Lines() {
   const [page, setPage] = useState(0);
@@ -57,11 +62,11 @@ export function Lines() {
     setSelectedRow(item.id);
   };
 
-    const handleOpenDelete = (item: IFormUpdateLine) => {
-      setLine(item);
-      setOpenDelete(!openDelete);
-      setSelectedRow(item.id);
-    };
+  const handleOpenDelete = (item: IFormUpdateLine) => {
+    setLine(item);
+    setOpenDelete(!openDelete);
+    setSelectedRow(item.id);
+  };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -71,65 +76,64 @@ export function Lines() {
   };
 
   //Exportar todos os items da tabela de listagem.
-  //   const handleExport = useCallback(async () => {
-  //     try {
-  //       const response = await findAllShiftNotPanitadet();
-  //       if (response.status === 200) {
-  //         const parseData = response.data.map((item: ShiftExport) => ({
-  //           Código: item.code,
-  //           Descrição: item.description,
-  //           "Data de criação": formatTime(item.createdAt),
-  //         }));
-  //         ExportXLSX(parseData, "Lista de Turnos");
-  //       }
-  //     } catch (error) {
-  //       setAlert({
-  //         open: true,
-  //         message: "Erro ao emitir relatório de turnos",
-  //         type: "error",
-  //       });
-  //     }
-  //   }, []);
+  const handleExport = useCallback(async () => {
+    try {
+      const response = await findAllLinesNotPaginated();
+      if (response.status === 200) {
+        const parseData = response.data.map((item: LineExport) => ({
+          Código: item.code,
+          Descrição: item.description,
+          "Data de criação": formatTime(item.createdAt),
+        }));
+        ExportXLSX(parseData, "Lista de linhas");
+      }
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: "Erro ao emitir relatório de turnos",
+        type: "error",
+      });
+    }
+  }, []);
 
   //Inport file
-  //   const handleUploadShift = async (
-  //     event: React.ChangeEvent<HTMLInputElement>
-  //   ) => {
-  //     const files = event.target.files;
-  //     if (!files || files.length === 0) return;
-  //     const file = files[0];
-  //     try {
-  //       const response = await uploadShift(file);
-  //       if (response && (response.status === 201 || response.status === 200)) {
-  //         setAlert({
-  //           open: true,
-  //           message: "Upload turno realizado com sucesso.",
-  //           type: "success",
-  //         });
-  //       }
-  //     } catch (error) {
-  //       if (axios.isAxiosError(error) && error.response) {
-  //         const { message } = error.response.data;
-  //         setAlert({
-  //           open: true,
-  //           message: message || "Internal server error",
-  //           type: "error",
-  //         });
-  //       } else {
-  //         setAlert({
-  //           open: true,
-  //           message: "Erro ao emitir relatório de turnos",
-  //           type: "error",
-  //         });
-  //       }
-  //     }
-  //   };
+  const handleUploadLine = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    try {
+      const response = await uploadLine(file);
+      if (response && (response.status === 201 || response.status === 200)) {
+        setAlert({
+          open: true,
+          message: "Upload turno realizado com sucesso.",
+          type: "success",
+        });
+        setDataRefresh(true);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const { message } = error.response.data;
+        setAlert({
+          open: true,
+          message: message || "Internal server error",
+          type: "error",
+        });
+      } else {
+        setAlert({
+          open: true,
+          message: "Erro ao emitir relatório de turnos",
+          type: "error",
+        });
+      }
+    }
+  };
 
   const fetchData = async (page: number) => {
     try {
       const response = await findManyLines(page);
-      console.log("linhas,", response.data.lines);
-
       setData({
         lines: response.data.lines,
         total: response.data.total,
@@ -224,24 +228,13 @@ export function Lines() {
         />
       )}
 
-      {/* <Toolbar
-        titleModule="Turno"
-        onSearch={handleSearch}
-        textBtnExp="Exportar"
-        handleExport={handleExport}
-        textBtnImp="Importar"
-        onUpload={handleUploadShift}
-        textBtnCreate="Novo Turno"
-        handleSave={handleOpen}
-      /> */}
-
       <Toolbar
         titleModule="Linha"
         onSearch={handleSearch}
         textBtnExp="Exportar"
-        handleExport={() => {}}
+        handleExport={handleExport}
         textBtnImp="Importar"
-        onUpload={() => {}}
+        onUpload={handleUploadLine}
         textBtnCreate="Nova Linha"
         handleSave={handleOpen}
       />
@@ -302,7 +295,7 @@ export function Lines() {
                             <Grid item>
                               <IconButton
                                 size="small"
-                               onClick={() => handleOpenDelete(line)}
+                                onClick={() => handleOpenDelete(line)}
                               >
                                 <DeleteOutlineIcon />
                               </IconButton>
