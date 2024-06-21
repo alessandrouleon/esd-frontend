@@ -20,10 +20,10 @@ import { COLORS } from "../../themes/colors";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Toolbar } from "../../components/toolbar";
-// import { CreateModal } from "./modal/createModal";
 import { Alert } from "../../components/alert";
 import { InitialAlertProps } from "../../components/alert/interfaces";
 import { findManyEmployee, searchForEmployee } from "../../services/employees";
+import { CreateModal } from "./modal/createModal";
 // import { UpdateModal } from "./modal/updateModal";
 // import { DeleteModal } from "./modal/deleteModal";
 // import ExportXLSX from "../../utils/exportXLSX";
@@ -208,7 +208,7 @@ export function Employees() {
         type={alert.type}
       />
 
-      {/* {open && (
+      {open && (
         <CreateModal
           open={open}
           setOpen={setOpen}
@@ -217,7 +217,7 @@ export function Employees() {
           dataRefresh={dataRefresh}
           setAlert={setAlert}
         />
-      )} */}
+      )}
 
       {/* {openUpdate && (
         <UpdateModal
@@ -255,11 +255,8 @@ export function Employees() {
       <Toolbar
         titleModule="Funcionários"
         onSearch={handleSearch}
-        textBtnExp="Exportar"
         handleExport={() => {}}
-        textBtnImp="Importar"
         onUpload={() => {}}
-        textBtnCreate="Novo Funcionario"
         handleSave={handleOpen}
       />
 

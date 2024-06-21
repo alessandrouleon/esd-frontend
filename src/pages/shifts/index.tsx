@@ -240,11 +240,8 @@ export function Shifts() {
       <Toolbar
         titleModule="Turno"
         onSearch={handleSearch}
-        textBtnExp="Exportar"
         handleExport={handleExport}
-        textBtnImp="Importar"
         onUpload={handleUploadShift}
-        textBtnCreate="Novo Turno"
         handleSave={handleOpen}
       />
 

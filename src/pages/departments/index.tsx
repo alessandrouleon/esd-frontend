@@ -233,11 +233,8 @@ export function Departments() {
       <Toolbar
         titleModule="Departamento"
         onSearch={handleSearch}
-        textBtnExp="Exportar"
         handleExport={handleExport}
-        textBtnImp="Importar"
         onUpload={handleUploadDepartment}
-        textBtnCreate="Novo Departamento"
         handleSave={handleOpen}
       />
 

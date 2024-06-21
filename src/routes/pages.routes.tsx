@@ -2,6 +2,7 @@ import Diversity2Icon from "@mui/icons-material/Diversity2";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
 import SpaceDashboardIcon  from "@mui/icons-material/SpaceDashboard";
 import TimelineIcon from '@mui/icons-material/Timeline';
+import Diversity3Icon from '@mui/icons-material/Diversity3';
 import { Shifts } from "../pages/shifts";
 import { Departments } from "../pages/departments";
 import { Dashboards } from "../pages/dashboards/inde";
@@ -26,7 +27,7 @@ export const APP_PAGES = [
   {
     title: "Funcionários",
     route: "/employee",
-    icon: <Diversity2Icon />,
+    icon: <Diversity3Icon />,
     component: <Employees />,
     showMenu: true,
   },

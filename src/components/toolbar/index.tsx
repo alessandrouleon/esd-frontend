@@ -8,13 +8,14 @@ import {
   Typography,
 } from "@mui/material";
 import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
+import AddIcon from "@mui/icons-material/Add";
+import Tooltip from "@mui/material/Tooltip";
 import { COLORS } from "../../themes/colors";
 
 interface HeaderProps {
   titleModule: string;
-  textBtnExp: string;
-  textBtnImp: string;
-  textBtnCreate: string;
   onSearch: (searchValue: string) => void;
   handleSave: () => void;
   handleExport: () => void;
@@ -23,9 +24,6 @@ interface HeaderProps {
 
 export function Toolbar({
   titleModule,
-  textBtnExp,
-  textBtnImp,
-  textBtnCreate,
   onSearch,
   handleSave,
   handleExport,
@@ -56,7 +54,7 @@ export function Toolbar({
       fileInputRef.current.click();
     }
   };
- 
+
   const clearSearchButton = (
     <IconButton
       edge="end"
@@ -92,7 +90,7 @@ export function Toolbar({
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end" sx={{ pr: 1 }}>
-                   {clearSearchButton}
+                  {clearSearchButton}
                 </InputAdornment>
               ),
             }}
@@ -100,24 +98,32 @@ export function Toolbar({
           />
         </Grid>
         <Grid item style={{ textAlign: "right" }}>
-          <Button
-            variant="outlined"
-            sx={{
-              marginRight: "0.5rem",
-            }}
-            onClick={handleExport}
-          >
-            {textBtnExp}
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={handleClickImport}
-            sx={{
-              marginRight: "0.5rem",
-            }}
-          >
-            {textBtnImp}
-          </Button>
+          <Tooltip title="Exportar planilha" placement="top">
+            <Button
+              variant="text"
+              sx={{
+                marginRight: "0.5rem",
+                padding: "0.1rem 0 0.2rem 0",
+                borderRadius: 50,
+              }}
+              onClick={handleExport}
+            >
+              <CloudDownloadIcon fontSize="large" />
+            </Button>
+          </Tooltip>
+          <Tooltip title="Importar planilha" placement="top">
+            <Button
+              variant="text"
+              onClick={handleClickImport}
+              sx={{
+                marginRight: "0.5rem",
+                padding: "0.1rem 0 0.2rem 0",
+                borderRadius: 50,
+              }}
+            >
+              <CloudUploadIcon fontSize="large" />
+            </Button>
+          </Tooltip>
           <input
             hidden
             ref={fileInputRef}
@@ -128,8 +134,16 @@ export function Toolbar({
               event.currentTarget.value = "";
             }}
           />
-          <Button variant="contained" onClick={handleSave}>
-            {textBtnCreate}
+          <Button
+            variant="outlined"
+            onClick={handleSave}
+            sx={{
+              marginLeft: "0.5rem",
+              padding: 0,
+              borderRadius: 50,
+            }}
+          >
+            <AddIcon fontSize="large" />
           </Button>
         </Grid>
       </Grid>

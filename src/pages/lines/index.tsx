@@ -231,11 +231,8 @@ export function Lines() {
       <Toolbar
         titleModule="Linha"
         onSearch={handleSearch}
-        textBtnExp="Exportar"
         handleExport={handleExport}
-        textBtnImp="Importar"
         onUpload={handleUploadLine}
-        textBtnCreate="Nova Linha"
         handleSave={handleOpen}
       />
 

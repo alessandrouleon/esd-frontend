@@ -36,19 +36,19 @@ export const columns: readonly Column[] = [
   {
     id: "occupation",
     label: "Ocupação",
-    minWidth: 100,
+    minWidth: 50,
     align: "center",
   },
   {
     id: "boot",
     label: "Bota",
-    minWidth: 20,
+    minWidth: 10,
     align: "center",
   },
   {
     id: "bracelete",
     label: "Pulseira",
-    minWidth: 20,
+    minWidth: 10,
     align: "center",
   },
   {
@@ -60,7 +60,7 @@ export const columns: readonly Column[] = [
   {
     id: "shiftId",
     label: "Turno",
-    minWidth: 70,
+    minWidth: 50,
     align: "center",
   },
   {
@@ -72,7 +72,7 @@ export const columns: readonly Column[] = [
   {
     id: "status",
     label: "Status",
-    minWidth: 50,
+    minWidth: 20,
     align: "center",
     renderCell: (params) => {
       return params.row.status === "ativo" ? (
