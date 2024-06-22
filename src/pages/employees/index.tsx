@@ -26,7 +26,7 @@ import { findManyEmployee, searchForEmployee } from "../../services/employees";
 import { CreateModal } from "./modal/createModal";
 import { Loader } from "../../components/loader";
 // import { UpdateModal } from "./modal/updateModal";
-// import { DeleteModal } from "./modal/deleteModal";
+import { DeleteModal } from "./modal/deleteModal";
 // import ExportXLSX from "../../utils/exportXLSX";
 // import axios from "axios";
 
@@ -37,7 +37,6 @@ export function Employees() {
   const [open, setOpen] = useState(false);
   const [dataRefresh, setDataRefresh] = useState(false);
   const [alert, setAlert] = useState(InitialAlertProps);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [employee, setEmployee] = useState<IFormUpdateEmployee>(
     initialEmployeeUpdate
   );
@@ -235,27 +234,17 @@ export function Employees() {
         />
       )} */}
 
-      {/* {openDelete && (
+      {openDelete && (
         <DeleteModal
-          shift={shift}
+          employee={employee}
           open={openDelete}
           setOpen={setOpenDelete}
           setAlert={setAlert}
           setDataRefresh={setDataRefresh}
           dataRefresh={dataRefresh}
         />
-      )} */}
+      )}
 
-      {/* <Toolbar
-        titleModule="Turno"
-        onSearch={handleSearch}
-        textBtnExp="Exportar"
-        handleExport={handleExport}
-        textBtnImp="Importar"
-        onUpload={handleUploadShift}
-        textBtnCreate="Novo Turno"
-        handleSave={handleOpen}
-      /> */}
 
       {loading ? (
         <div
