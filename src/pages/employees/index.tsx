@@ -24,6 +24,7 @@ import { Alert } from "../../components/alert";
 import { InitialAlertProps } from "../../components/alert/interfaces";
 import { findManyEmployee, searchForEmployee } from "../../services/employees";
 import { CreateModal } from "./modal/createModal";
+import { Loader } from "../../components/loader";
 // import { UpdateModal } from "./modal/updateModal";
 // import { DeleteModal } from "./modal/deleteModal";
 // import ExportXLSX from "../../utils/exportXLSX";
@@ -44,6 +45,7 @@ export function Employees() {
   const [openDelete, setOpenDelete] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [selectedRow, setSelectedRow] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSearch = (value: string) => {
     debouncedSearch(value);
@@ -130,6 +132,7 @@ export function Employees() {
   //   };
 
   const fetchData = async (page: number) => {
+    setLoading(true);
     try {
       const response = await findManyEmployee(page);
       const employees = response.data.employees;
@@ -151,6 +154,8 @@ export function Employees() {
       setDataRefresh(false);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -252,100 +257,118 @@ export function Employees() {
         handleSave={handleOpen}
       /> */}
 
-      <Toolbar
-        titleModule="Funcionários"
-        onSearch={handleSearch}
-        handleExport={() => {}}
-        onUpload={() => {}}
-        handleSave={handleOpen}
-      />
-
-      <TableContainer>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{
-                    minWidth: column.minWidth,
-                    background: COLORS.PRIMARY_100,
-                  }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.employees.map((employee) => {
-              return (
-                <TableRow
-                  hover
-                  role="checkbox"
-                  tabIndex={-1}
-                  key={employee.id}
-                  sx={{
-                    backgroundColor:
-                      selectedRow === employee.id
-                        ? COLORS.PRIMARY_50
-                        : "inherit",
-                    "&:hover": {
-                      backgroundColor: COLORS.PRIMARY_50,
-                    },
-                  }}
-                >
-                  {columns.map((column) => {
-                    const value = employee[column.id];
-                    return (
-                      <TableCell
-                        key={column.id}
-                        align={column.align}
-                        size="small"
-                      >
-                           {column.renderCell
-                        ? column.renderCell({ row: employee })
-                        : value}
-                        {column.id === "actions" && (
-                          <Grid container spacing={1} justifyContent="center">
-                            <Grid item>
-                              <IconButton
-                                size="small"
-                                onClick={() => handleUpdate(employee)}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            </Grid>
-                            <Grid item>
-                              <IconButton
-                                size="small"
-                                onClick={() => handleOpenDelete(employee)}
-                                disabled={employee.status !== "ativo"}
-                              >
-                                <DeleteOutlineIcon />
-                              </IconButton>
-                            </Grid>
-                          </Grid>
-                        )}
-                      </TableCell>
-                    );
-                  })}
+      {loading ? (
+        <div
+          style={{
+            height: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Loader />
+        </div>
+      ) : (
+        <>
+          <Toolbar
+            titleModule="Funcionários"
+            onSearch={handleSearch}
+            handleExport={() => {}}
+            onUpload={() => {}}
+            handleSave={handleOpen}
+          />
+          <TableContainer>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      align={column.align}
+                      style={{
+                        minWidth: column.minWidth,
+                        background: COLORS.PRIMARY_100,
+                      }}
+                    >
+                      {column.label}
+                    </TableCell>
+                  ))}
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[0]}
-        component="div"
-        count={data.total}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+              </TableHead>
+              <TableBody>
+                {data.employees.map((employee) => {
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={employee.id}
+                      sx={{
+                        backgroundColor:
+                          selectedRow === employee.id
+                            ? COLORS.PRIMARY_50
+                            : "inherit",
+                        "&:hover": {
+                          backgroundColor: COLORS.PRIMARY_50,
+                        },
+                      }}
+                    >
+                      {columns.map((column) => {
+                        const value = employee[column.id];
+                        return (
+                          <TableCell
+                            key={column.id}
+                            align={column.align}
+                            size="small"
+                          >
+                            {column.renderCell
+                              ? column.renderCell({ row: employee })
+                              : value}
+                            {column.id === "actions" && (
+                              <Grid
+                                container
+                                spacing={1}
+                                justifyContent="center"
+                              >
+                                <Grid item>
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => handleUpdate(employee)}
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                </Grid>
+                                <Grid item>
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => handleOpenDelete(employee)}
+                                    disabled={employee.status !== "ativo"}
+                                  >
+                                    <DeleteOutlineIcon />
+                                  </IconButton>
+                                </Grid>
+                              </Grid>
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[0]}
+            component="div"
+            count={data.total}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </>
+      )}
     </>
   );
 }

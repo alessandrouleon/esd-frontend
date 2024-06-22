@@ -5,7 +5,7 @@ export interface ICreateEmployeeProps {
     bracelete: string;
     status: string;
     occupation: string;
-    imageId?: string;
+    imageId?: string | null;
     shiftId: string;
     departmentId: string;
     lineId: string;

@@ -7,14 +7,21 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  CircularProgress,
 } from "@mui/material";
 import axios from "axios";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { IFormCreateEmployee } from "../interfaces";
 import DialogContainer from "../../../components/dialog";
-import { FormModal } from "../styles";
+import ImageSearchIcon from "@mui/icons-material/ImageSearch";
+import { FormModal, createImageFromBlob } from "../styles";
 import { ICreateModalProps } from "../../../components/dialog/styles";
-import { createEmployee } from "../../../services/employees";
+import {
+  createEmployee,
+  uploadImageEmployee,
+} from "../../../services/employees";
+import InsertPhotoIcon from "../../../assets/profile-user.png";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import {
   MenuProps,
   listBoot,
@@ -27,8 +34,21 @@ import { DepartmentProps } from "../../departments/interfaces";
 import { findAllShiftNotPaginated } from "../../../services/shifts";
 import { ShiftProps } from "../../shifts/interfaces";
 import { findAllLinesNotPaginated } from "../../../services/lines";
-import {  LineProps } from "../../lines/interfaces";
+import { LineProps } from "../../lines/interfaces";
+import { COLORS } from "../../../themes/colors";
 
+const defaultValues = {
+  name: "",
+  registration: "",
+  boot: "",
+  bracelete: "",
+  status: "ativo",
+  occupation: "",
+  imageId: "",
+  shiftId: "",
+  departmentId: "",
+  lineId: "",
+};
 
 export function CreateModal({
   open,
@@ -38,12 +58,11 @@ export function CreateModal({
   dataRefresh,
   setPage,
 }: ICreateModalProps) {
-    const [departments, setDepartments] = useState<DepartmentProps[]>([]);
-    const [shifts, setShifts] = useState<ShiftProps[]>([]);
-    const [lines, setLines] = useState<LineProps[]>([]);
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const [departments, setDepartments] = useState<DepartmentProps[]>([]);
+  const [shifts, setShifts] = useState<ShiftProps[]>([]);
+  const [lines, setLines] = useState<LineProps[]>([]);
+  const [values, setValues] = useState<{ file: File | null }>({ file: null });
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -51,19 +70,17 @@ export function CreateModal({
     formState: { errors },
     reset,
   } = useForm<IFormCreateEmployee>({
-    defaultValues: {
-      name: "",
-      registration: "",
-      boot: "",
-      bracelete: "",
-      status: "ativo",
-      occupation: "",
-      imageId: "",
-      shiftId: "",
-      departmentId: "",
-      lineId: "",
-    },
+    defaultValues,
   });
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+    setValues({ ...values, file });
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const fetchDepartments = async () => {
     try {
@@ -76,7 +93,7 @@ export function CreateModal({
     }
   };
 
-const fetchShifts = async () => {
+  const fetchShifts = async () => {
     try {
       const response = await findAllShiftNotPaginated();
       if (response && response.data) {
@@ -94,13 +111,25 @@ const fetchShifts = async () => {
         setLines(response.data);
       }
     } catch (error) {
-      console.error("Erro ao buscar departamentos:", error);
+      console.error("Erro ao buscar linha:", error);
     }
   };
 
   const onSubmit: SubmitHandler<IFormCreateEmployee> = async (data) => {
-    try {       
-      const response = await createEmployee(data);
+    setLoading(true);
+    try {
+      let supabaseImageId: string | null;
+
+      if (!values.file) {
+        supabaseImageId = null;
+      } else {
+        const fileImageEmployee = await uploadImageEmployee(values.file);
+        supabaseImageId = fileImageEmployee.data.data.id;
+      }
+      const response = await createEmployee({
+        ...data,
+        imageId: supabaseImageId,
+      });
       if (response.status === 201) {
         setPage(0);
         setDataRefresh(!dataRefresh);
@@ -121,6 +150,8 @@ const fetchShifts = async () => {
           type: "error",
         });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -130,7 +161,6 @@ const fetchShifts = async () => {
     fetchLines();
   }, []);
 
-
   return (
     <DialogContainer
       open={open}
@@ -139,96 +169,197 @@ const fetchShifts = async () => {
     >
       <FormModal onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TextField
-              id="name"
-              label="Nome"
-              type="text"
-              variant="outlined"
-              fullWidth
-              size="small"
-              {...register("name", {
-                required: {
-                  value: true,
-                  message: "🛈 Campo é obrigatório.",
-                },
-                maxLength: {
-                  value: 150,
-                  message: "🛈 Campo excedeu o limite de 150 caracteres.",
-                },
-              })}
-              error={!!errors?.name}
-              helperText={errors?.name ? errors?.name.message : null}
-            />
+          <Grid item xs={3}>
+            <div className="section-four">
+              <div className="container-element">
+                <img
+                  className="model-img"
+                  src={
+                    values.file
+                      ? createImageFromBlob(values.file)
+                      : InsertPhotoIcon
+                  }
+                  alt="Avatar user"
+                />
+
+                <div>
+                  <input
+                    accept="image/*"
+                    id="contained-button-file"
+                    type="file"
+                    style={{ display: "none" }}
+                    onChange={handleChange}
+                  />
+                  {values.file === null ? (
+                    <label htmlFor="contained-button-file">
+                      <Button
+                        variant="text"
+                        component="span"
+                        sx={{
+                          width: 35,
+                          height: 35,
+                          borderRadius: "50%",
+                          mb: -2,
+                          ml: 8,
+                          mt: -5,
+                          minWidth: 0,
+                          padding: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: COLORS.PRIMARY_50,
+                          bottom: -18,
+                          position: "relative",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <ImageSearchIcon />
+                        </Box>
+                      </Button>
+                    </label>
+                  ) : (
+                    <Button
+                      variant="text"
+                      sx={{
+                        width: 35,
+                        height: 35,
+                        borderRadius: "50%",
+                        mb: -2,
+                        ml: 8,
+                        mt: -5,
+                        minWidth: 0,
+                        padding: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: COLORS.PRIMARY_50,
+                        bottom: -18,
+                        position: "relative",
+                      }}
+                      onClick={() => setValues({ ...values, file: "" || null })}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <DeleteOutlineIcon />
+                      </Box>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
           </Grid>
-          <Grid item xs={6}>
-            <TextField
-              id="registration"
-              label="Matrícula"
-              type="text"
-              variant="outlined"
-              fullWidth
-              size="small"
-              {...register("registration", {
-                required: {
-                  value: true,
-                  message: "🛈 Campo é obrigatório.",
-                },
-                minLength: {
-                  value: 6,
-                  message: "🛈 Campo precisa ter 6 números.",
-                },
-              })}
-              error={!!errors?.registration}
-              helperText={
-                errors?.registration ? errors?.registration.message : null
-              }
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <FormControl fullWidth size="small">
-              <InputLabel id="occupationId">Ocupação</InputLabel>
-              <Select
-                labelId="occupationId"
-                id="occupationId"
-                label="Ocupação"
-                MenuProps={MenuProps}
-                {...register("occupation", {
+          {/*  */}
+          <Grid item width="75%" sx={{ ml: 0, mr: 0, mt: 2 }}>
+            <Grid item xs={12} mb={2}>
+              <TextField
+                id="name"
+                label="Nome"
+                type="text"
+                variant="outlined"
+                fullWidth
+                size="small"
+                {...register("name", {
                   required: {
                     value: true,
                     message: "🛈 Campo é obrigatório.",
                   },
                   maxLength: {
-                    value: 100,
-                    message: "🛈 Campo excedeu o limite de 100 caracteres.",
+                    value: 150,
+                    message: "🛈 Campo excedeu o limite de 150 caracteres.",
                   },
                 })}
-                error={!!errors?.occupation}
-                defaultValue={
-                  errors?.occupation ? errors?.occupation.message : null
-                }
-              >
-                <MenuItem value="">
-                  <em>Selecione item</em>
-                </MenuItem>
-                {listOcupacao.map((item: string) => (
-                  <MenuItem value={item}>{item}</MenuItem>
-                ))}
-              </Select>
-              {errors.occupation && (
-                <p
-                  style={{
-                    color: "red",
-                    fontSize: "0.7rem",
-                    marginLeft: "1rem",
-                    marginTop: "0.2rem",
-                  }}
-                >
-                  {errors.occupation.message}
-                </p>
-              )}
-            </FormControl>
+                error={!!errors?.name}
+                helperText={errors?.name ? errors?.name.message : null}
+              />
+            </Grid>
+            {/*  */}
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <TextField
+                  id="registration"
+                  label="Matrícula"
+                  type="text"
+                  variant="outlined"
+                  fullWidth
+                  size="small"
+                  {...register("registration", {
+                    required: {
+                      value: true,
+                      message: "🛈 Campo é obrigatório.",
+                    },
+                    minLength: {
+                      value: 6,
+                      message: "🛈 Campo precisa ter 6 números.",
+                    },
+                  })}
+                  error={!!errors?.registration}
+                  helperText={
+                    errors?.registration ? errors?.registration.message : null
+                  }
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl fullWidth size="small">
+                  <InputLabel id="occupationId">Ocupação</InputLabel>
+                  <Select
+                    labelId="occupationId"
+                    id="occupationId"
+                    label="Ocupação"
+                    MenuProps={MenuProps}
+                    {...register("occupation", {
+                      required: {
+                        value: true,
+                        message: "🛈 Campo é obrigatório.",
+                      },
+                      maxLength: {
+                        value: 100,
+                        message: "🛈 Campo excedeu o limite de 100 caracteres.",
+                      },
+                    })}
+                    error={!!errors?.occupation}
+                    defaultValue={
+                      errors?.occupation ? errors?.occupation.message : null
+                    }
+                  >
+                    <MenuItem value="">
+                      <em>Selecione item</em>
+                    </MenuItem>
+                    {listOcupacao.map((item: string) => (
+                      <MenuItem key={item} value={item}>
+                        {item}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {errors.occupation && (
+                    <p
+                      style={{
+                        color: "red",
+                        fontSize: "0.7rem",
+                        marginLeft: "1rem",
+                        marginTop: "0.2rem",
+                      }}
+                    >
+                      {errors.occupation.message}
+                    </p>
+                  )}
+                </FormControl>
+              </Grid>
+            </Grid>
+
+            {/*  */}
           </Grid>
+
           <Grid item xs={6}>
             <FormControl fullWidth size="small">
               <InputLabel id="bootId">Bota</InputLabel>
@@ -313,28 +444,7 @@ const fetchShifts = async () => {
               )}
             </FormControl>
           </Grid>
-          <Grid item xs={6}>
-            <TextField
-              id="imageId"
-              label="Image"
-              type="text"
-              variant="outlined"
-              fullWidth
-              size="small"
-              {...register("imageId", {
-                required: {
-                  value: true,
-                  message: "🛈 Campo é obrigatório.",
-                },
-                minLength: {
-                  value: 6,
-                  message: "🛈 Campo precisa ter 6 números.",
-                },
-              })}
-              error={!!errors?.imageId}
-              helperText={errors?.imageId ? errors?.imageId.message : null}
-            />
-          </Grid>
+
           <Grid item xs={6}>
             <FormControl fullWidth size="small">
               <InputLabel id="departmentId">Departamento</InputLabel>
@@ -382,7 +492,30 @@ const fetchShifts = async () => {
             </FormControl>
           </Grid>
           <Grid item xs={6}>
-              <FormControl fullWidth size="small">
+            <TextField
+              id="status"
+              label="Status"
+              type="text"
+              variant="outlined"
+              fullWidth
+              size="small"
+              disabled
+              {...register("status", {
+                required: {
+                  value: true,
+                  message: "🛈 Campo é obrigatório.",
+                },
+                maxLength: {
+                  value: 150,
+                  message: "🛈 Campo excedeu o limite de 150 caracteres.",
+                },
+              })}
+              error={!!errors?.status}
+              helperText={errors?.status ? errors?.status.message : null}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <FormControl fullWidth size="small">
               <InputLabel id="lineId">Linha</InputLabel>
               <Select
                 labelId="lineId"
@@ -400,9 +533,7 @@ const fetchShifts = async () => {
                   },
                 })}
                 error={!!errors?.lineId}
-                defaultValue={
-                  errors?.lineId ? errors?.lineId.message : null
-                }
+                defaultValue={errors?.lineId ? errors?.lineId.message : null}
               >
                 <MenuItem value="">
                   <em>Selecione item</em>
@@ -428,7 +559,7 @@ const fetchShifts = async () => {
             </FormControl>
           </Grid>
           <Grid item xs={6}>
-             <FormControl fullWidth size="small">
+            <FormControl fullWidth size="small">
               <InputLabel id="shiftId">Turno</InputLabel>
               <Select
                 labelId="shiftId"
@@ -446,9 +577,7 @@ const fetchShifts = async () => {
                   },
                 })}
                 error={!!errors?.shiftId}
-                defaultValue={
-                  errors?.shiftId ? errors?.shiftId.message : null
-                }
+                defaultValue={errors?.shiftId ? errors?.shiftId.message : null}
               >
                 <MenuItem value="">
                   <em>Selecione item</em>
@@ -482,8 +611,20 @@ const fetchShifts = async () => {
           }}
         >
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button sx={{ ml: 2 }} variant="contained" type="submit">
-            Cadastra
+          <Button
+            disabled={loading}
+            sx={{ ml: 2 }}
+            variant="contained"
+            type="submit"
+          >
+            {loading ? (
+              <>
+                <CircularProgress size={24} sx={{ mr: 1 }} />
+                Cadastrando...
+              </>
+            ) : (
+              "Cadastrar"
+            )}
           </Button>
         </Box>
       </FormModal>

@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import BackupIcon from "@mui/icons-material/Backup";
+import { COLORS } from "../../themes/colors";
 
 export const FormModal = styled.form`
   padding: 0;
@@ -27,17 +29,35 @@ export const FormModal = styled.form`
   }
 
   .section-four {
-    width: 100%;
-    margin-top: 15px;
+    border-radius: 1rem;
+    padding-top: 0rem;
+    width: 7.9rem;
+    height: 8rem;
+    /* background: ${COLORS.NEUTRAL_200}; */
+  }
 
-    label {
-      color: #a3a3a3;
-      font-size: 12px;
-    }
+  .container-element {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 0rem;
+    padding-left: 0.722rem;
+    padding-top: 0.5rem;
+  }
+  .model-img {
+    display: grid;
+    place-items: center;
+    width: 6.5rem;
+    height: 6.5rem;
+    background: ${COLORS.NEUTRAL_100};
+    border-radius: 100%;
+    border: solid 1px ${COLORS.NEUTRAL_300};
+    padding: 0.2rem;
   }
 
   /*Configurando calendário  */
-  input[type='date']::-webkit-calendar-picker-indicator {
+  input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(0.8) brightness(50%) sepia(60%) saturate(50%)
       hue-rotate(30deg);
     cursor: pointer;
@@ -46,7 +66,6 @@ export const FormModal = styled.form`
     margin-right: 0.2rem;
   }
 `;
-
 
 export const FormFooter = styled.div`
   display: flex;
@@ -57,3 +76,15 @@ export const FormFooter = styled.div`
     margin-right: 25px;
   }
 `;
+
+export const UploadIcon = styled(BackupIcon)`
+  height: 14px;
+  width: 20px;
+  border-radius: 0px;
+  margin-left: 5px;
+  align-items: center;
+`;
+
+
+export const createImageFromBlob = (image: Blob) => URL.createObjectURL(image);
+
