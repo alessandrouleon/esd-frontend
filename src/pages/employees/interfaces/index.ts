@@ -130,4 +130,7 @@ export interface EmployeeExport {
   departmentId: string;
   lineId: string;
   createdAt: string;
+  Shift?: Shift;
+  Department?: Department;
+  Line?: Line;
 }

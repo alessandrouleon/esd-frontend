@@ -8,6 +8,7 @@ import TableRow from "@mui/material/TableRow";
 
 import { columns } from "./table/columns";
 import {
+  EmployeeExport,
   EmployeeProps,
   IFormUpdateEmployee,
   // EmployeeExport,
@@ -22,12 +23,17 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Toolbar } from "../../components/toolbar";
 import { Alert } from "../../components/alert";
 import { InitialAlertProps } from "../../components/alert/interfaces";
-import { findManyEmployee, searchForEmployee } from "../../services/employees";
+import {
+  findAllEmployeeNotPaginated,
+  findManyEmployee,
+  searchForEmployee,
+} from "../../services/employees";
 import { CreateModal } from "./modal/createModal";
 import { Loader } from "../../components/loader";
 // import { UpdateModal } from "./modal/updateModal";
 import { DeleteModal } from "./modal/deleteModal";
-// import ExportXLSX from "../../utils/exportXLSX";
+import { formatTime } from "../../utils/date";
+import ExportXLSX from "../../utils/exportXLSX";
 // import axios from "axios";
 
 export function Employees() {
@@ -76,25 +82,32 @@ export function Employees() {
   };
 
   //Exportar todos os items da tabela de listagem.
-  //   const handleExport = useCallback(async () => {
-  //     try {
-  //       const response = await findAllShiftNotPaginated();
-  //       if (response.status === 200) {
-  //         const parseData = response.data.map((item: ShiftExport) => ({
-  //           Código: item.code,
-  //           Descrição: item.description,
-  //           "Data de criação": formatTime(item.createdAt),
-  //         }));
-  //         ExportXLSX(parseData, "Lista de Turnos");
-  //       }
-  //     } catch (error) {
-  //       setAlert({
-  //         open: true,
-  //         message: "Erro ao emitir relatório de turnos",
-  //         type: "error",
-  //       });
-  //     }
-  //   }, []);
+  const handleExport = useCallback(async () => {
+    try {
+      const response = await findAllEmployeeNotPaginated();
+      if (response.status === 200) {
+        const parseData = response.data.employees.map((item: EmployeeExport) => ({
+          Nome: item.name,
+          Matricula: item.registration,
+          Bota: item.boot,
+          Pulseira: item.bracelete,
+          Startos: item.status,
+          Ocupação: item.occupation,
+          Departamento: item.Department?.description,
+          Turno: item.Shift?.description,
+          Linha: item.Line?.code,
+          "Data de criação": formatTime(item.createdAt),
+        }));
+        ExportXLSX(parseData, "Lista de Funcioários");
+      }
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: "Erro ao emitir relatório de funcionários",
+        type: "error",
+      });
+    }
+  }, []);
 
   //Inport file
   //   const handleUploadShift = async (
@@ -130,33 +143,36 @@ export function Employees() {
   //     }
   //   };
 
-  const fetchData = async (page: number) => {
-    setLoading(true);
-    try {
-      const response = await findManyEmployee(page);
-      const employees = response.data.employees;
-      const customEmployeesList = employees.map((item: EmployeeProps) => ({
-        ...item,
-        departmentId: item.Department?.description,
-        shiftId: item.Shift?.description,
-        lineId: item.Line?.code,
-      }));
-      setData({
-        employees: customEmployeesList,
-        total: response.data.total,
-        currentPage: response.data.currentPage,
-        nextPage: response.data.nextPage,
-        prevPage: response.data.prevPage,
-        lastPage: response.data.lastPage,
-      });
+  const fetchData = useCallback(
+    async (page: number) => {
+      setLoading(true);
+      try {
+        const response = await findManyEmployee(page);
+        const employees = response.data.employees;
+        const customEmployeesList = employees.map((item: EmployeeProps) => ({
+          ...item,
+          departmentId: item.Department?.description,
+          shiftId: item.Shift?.description,
+          lineId: item.Line?.code,
+        }));
+        setData({
+          employees: customEmployeesList,
+          total: response.data.total,
+          currentPage: response.data.currentPage,
+          nextPage: response.data.nextPage,
+          prevPage: response.data.prevPage,
+          lastPage: response.data.lastPage,
+        });
 
-      setDataRefresh(false);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+        setDataRefresh(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [page]
+  );
 
   const searchData = useCallback(
     async (page: number) => {
@@ -245,7 +261,6 @@ export function Employees() {
         />
       )}
 
-
       {loading ? (
         <div
           style={{
@@ -262,7 +277,7 @@ export function Employees() {
           <Toolbar
             titleModule="Funcionários"
             onSearch={handleSearch}
-            handleExport={() => {}}
+            handleExport={handleExport}
             onUpload={() => {}}
             handleSave={handleOpen}
           />

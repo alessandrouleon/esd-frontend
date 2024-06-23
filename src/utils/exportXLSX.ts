@@ -20,6 +20,9 @@ export default function ExportXLSX(xlsxData: XlsxData[], fileName: string): void
     { wch: 30 }, 
     { wch: 30 }, 
     { wch: 30 }, 
+    { wch: 30 }, 
+    { wch: 30 }, 
+    { wch: 30 },
   ];
 
   const wb: XLSX.WorkBook = { Sheets: { data: ws }, SheetNames: ["data"] };
