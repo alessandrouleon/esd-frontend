@@ -76,6 +76,9 @@ export interface IFormUpdateEmployee {
   shiftId: string;
   departmentId: string;
   lineId: string;
+  Shift?: Shift;
+  Department?: Department;
+  Line?: Line;
 }
 
 export const initialEmployeeUpdate: IFormUpdateEmployee = {

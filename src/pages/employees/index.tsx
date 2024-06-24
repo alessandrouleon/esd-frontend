@@ -30,7 +30,7 @@ import {
 } from "../../services/employees";
 import { CreateModal } from "./modal/createModal";
 import { Loader } from "../../components/loader";
-// import { UpdateModal } from "./modal/updateModal";
+import { UpdateModal } from "./modal/updateModal";
 import { DeleteModal } from "./modal/deleteModal";
 import { formatTime } from "../../utils/date";
 import ExportXLSX from "../../utils/exportXLSX";
@@ -86,18 +86,20 @@ export function Employees() {
     try {
       const response = await findAllEmployeeNotPaginated();
       if (response.status === 200) {
-        const parseData = response.data.employees.map((item: EmployeeExport) => ({
-          Nome: item.name,
-          Matricula: item.registration,
-          Bota: item.boot,
-          Pulseira: item.bracelete,
-          Startos: item.status,
-          Ocupação: item.occupation,
-          Departamento: item.Department?.description,
-          Turno: item.Shift?.description,
-          Linha: item.Line?.code,
-          "Data de criação": formatTime(item.createdAt),
-        }));
+        const parseData = response.data.employees.map(
+          (item: EmployeeExport) => ({
+            Nome: item.name,
+            Matricula: item.registration,
+            Bota: item.boot,
+            Pulseira: item.bracelete,
+            Startos: item.status,
+            Ocupação: item.occupation,
+            Departamento: item.Department?.description,
+            Turno: item.Shift?.description,
+            Linha: item.Line?.code,
+            "Data de criação": formatTime(item.createdAt),
+          })
+        );
         ExportXLSX(parseData, "Lista de Funcioários");
       }
     } catch (error) {
@@ -151,9 +153,9 @@ export function Employees() {
         const employees = response.data.employees;
         const customEmployeesList = employees.map((item: EmployeeProps) => ({
           ...item,
-          departmentId: item.Department?.description,
-          shiftId: item.Shift?.description,
-          lineId: item.Line?.code,
+          department: item.Department?.description,
+          shift: item.Shift?.description,
+          line: item.Line?.code,
         }));
         setData({
           employees: customEmployeesList,
@@ -239,16 +241,16 @@ export function Employees() {
         />
       )}
 
-      {/* {openUpdate && (
+      {openUpdate && (
         <UpdateModal
-          shift={shift}
+          employee={employee}
           open={openUpdate}
           setOpen={setOpenUpdate}
           setAlert={setAlert}
           setDataRefresh={setDataRefresh}
           dataRefresh={dataRefresh}
         />
-      )} */}
+      )}
 
       {openDelete && (
         <DeleteModal

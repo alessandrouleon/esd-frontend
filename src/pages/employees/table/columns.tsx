@@ -13,9 +13,9 @@ interface Column {
     | "bracelete"
     | "status"
     | "occupation"
-    | "shiftId"
-    | "departmentId"
-    | "lineId"
+    | "shift"
+    | "department"
+    | "line"
     | "createdAt"
     | "actions";
   label: string;
@@ -52,19 +52,19 @@ export const columns: readonly Column[] = [
     align: "center",
   },
   {
-    id: "departmentId",
+    id: "department",
     label: "Departamento",
     minWidth: 50,
     align: "center",
   },
   {
-    id: "shiftId",
+    id: "shift",
     label: "Turno",
     minWidth: 50,
     align: "center",
   },
   {
-    id: "lineId",
+    id: "line",
     label: "Linha",
     minWidth: 50,
     align: "center",

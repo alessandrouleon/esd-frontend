@@ -10,24 +10,19 @@ export const MenuProps = {
 };
 
 export const listOcupacao = [
-    'Lider de Prdução',
-    'Lider de CQ',
-    'Operador de produção',
-    'Testador',
-    'Operador de logística',
-    'Inspetor',
-    'Revisor',
-  ];
-  //.map((item) => item.toUpperCase());
+  "Lider de Produção",
+  "Lider de CQ",
+  "Operador de produção",
+  "Testador",
+  "Dev TI",
+  "Operador de logística",
+  "Inspetor",
+  "Revisor",
+];
+//.map((item) => item.toUpperCase());
 
-  export const listBoot = [
-    'OK',
-    'NOK',
-    'NA',
-  ];
+export const listBoot = ["OK", "NOK", "NA"];
 
-  export const listBracelete = [
-    'OK',
-    'NOK',
-    'NA',
-  ];
+export const listBracelete = ["OK", "NOK", "NA"];
+
+export const listStatus = ["ativo", "férias", "inativo"];

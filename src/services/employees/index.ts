@@ -12,11 +12,11 @@ export const createEmployee = async (data: ICreateEmployeeProps) => {
   return await api.post(`/employees/`, data);
 };
 
-export const uploadImageEmployee = (file: File) => {
+export const uploadImageEmployee = async (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  return api.post(`employees/upload`, formData, {
+  return await api.post(`employees/upload`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -39,6 +39,10 @@ export const updateEmployee = async (
     departmentId: data.departmentId.trim(),
     lineId: data.lineId.trim(),
   });
+};
+
+export const findByEmployeeId = async (id: string) => {
+  return await api.get(`/employees/${id}`);
 };
 
 export const deleteEmployee = async (id: string) => {
