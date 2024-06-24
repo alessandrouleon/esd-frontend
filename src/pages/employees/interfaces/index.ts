@@ -24,6 +24,9 @@ export interface EmployeeProps {
   shiftId: string;
   departmentId: string;
   lineId: string;
+  line?: string;
+  shift?: string;
+  department?: string;
   actions: string;
   createdAt: string;
   updatedAt: string | null;

@@ -8,10 +8,9 @@ import TableRow from "@mui/material/TableRow";
 
 import { columns } from "./table/columns";
 import {
-  EmployeeExport,
   EmployeeProps,
   IFormUpdateEmployee,
-  // EmployeeExport,
+  EmployeeExport,
   initialEmployeeUpdate,
   initialStateData,
 } from "./interfaces";
@@ -27,6 +26,7 @@ import {
   findAllEmployeeNotPaginated,
   findManyEmployee,
   searchForEmployee,
+  uploadEmployee,
 } from "../../services/employees";
 import { CreateModal } from "./modal/createModal";
 import { Loader } from "../../components/loader";
@@ -34,7 +34,7 @@ import { UpdateModal } from "./modal/updateModal";
 import { DeleteModal } from "./modal/deleteModal";
 import { formatTime } from "../../utils/date";
 import ExportXLSX from "../../utils/exportXLSX";
-// import axios from "axios";
+import axios from "axios";
 
 export function Employees() {
   const [page, setPage] = useState(0);
@@ -112,38 +112,38 @@ export function Employees() {
   }, []);
 
   //Inport file
-  //   const handleUploadShift = async (
-  //     event: React.ChangeEvent<HTMLInputElement>
-  //   ) => {
-  //     const files = event.target.files;
-  //     if (!files || files.length === 0) return;
-  //     const file = files[0];
-  //     try {
-  //       const response = await uploadShift(file);
-  //       if (response && (response.status === 201 || response.status === 200)) {
-  //         setAlert({
-  //           open: true,
-  //           message: "Upload turno realizado com sucesso.",
-  //           type: "success",
-  //         });
-  //       }
-  //     } catch (error) {
-  //       if (axios.isAxiosError(error) && error.response) {
-  //         const { message } = error.response.data;
-  //         setAlert({
-  //           open: true,
-  //           message: message || "Internal server error",
-  //           type: "error",
-  //         });
-  //       } else {
-  //         setAlert({
-  //           open: true,
-  //           message: "Erro ao emitir relatório de turnos",
-  //           type: "error",
-  //         });
-  //       }
-  //     }
-  //   };
+    const handleUploadEmployee = async (
+      event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+      const file = files[0];
+      try {
+        const response = await uploadEmployee(file);
+        if (response && (response.status === 201 || response.status === 200)) {
+          setAlert({
+            open: true,
+            message: "Upload do funcionário realizado com sucesso.",
+            type: "success",
+          });
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          const { message } = error.response.data;
+          setAlert({
+            open: true,
+            message: message || "Internal server error",
+            type: "error",
+          });
+        } else {
+          setAlert({
+            open: true,
+            message: "Erro ao emitir relatório de turnos",
+            type: "error",
+          });
+        }
+      }
+    };
 
   const fetchData = useCallback(
     async (page: number) => {
@@ -280,7 +280,7 @@ export function Employees() {
             titleModule="Funcionários"
             onSearch={handleSearch}
             handleExport={handleExport}
-            onUpload={() => {}}
+            onUpload={handleUploadEmployee}
             handleSave={handleOpen}
           />
           <TableContainer>
