@@ -3,11 +3,13 @@ import NightsStayIcon from "@mui/icons-material/NightsStay";
 import SpaceDashboardIcon  from "@mui/icons-material/SpaceDashboard";
 import TimelineIcon from '@mui/icons-material/Timeline';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
+import GroupIcon from '@mui/icons-material/Group';
 import { Shifts } from "../pages/shifts";
 import { Departments } from "../pages/departments";
 import { Dashboards } from "../pages/dashboards/inde";
 import { Lines } from "../pages/lines";
 import { Employees } from "../pages/employees";
+import { Users } from "../pages/users";
 
 export const APP_PAGES = [
   {
@@ -32,6 +34,13 @@ export const APP_PAGES = [
     showMenu: true,
   },
   {
+    title: "Linhas",
+    route: "/line",
+    icon: <TimelineIcon />,
+    component: <Lines />,
+    showMenu: true,
+  },
+  {
     title: "Turnos",
     route: "/turno",
     icon: <NightsStayIcon />,
@@ -39,10 +48,10 @@ export const APP_PAGES = [
     showMenu: true,
   },
   {
-    title: "Linhas",
-    route: "/line",
-    icon: <TimelineIcon />,
-    component: <Lines />,
+    title: "Usuários",
+    route: "/users",
+    icon: <GroupIcon />,
+    component: <Users />,
     showMenu: true,
   },
   

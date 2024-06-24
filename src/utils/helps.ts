@@ -26,3 +26,5 @@ export const listBoot = ["OK", "NOK", "NA"];
 export const listBracelete = ["OK", "NOK", "NA"];
 
 export const listStatus = ["ativo", "férias", "inativo"];
+
+export const listRoles = ["Full", "Editar", "Deletar", "Criar"];
