@@ -301,9 +301,9 @@ export function UpdateModal({
                     <MenuItem value="">
                       <em>Selecione item</em>
                     </MenuItem>
-                    {listStatus.map((item: string) => (
-                      <MenuItem key={item} value={item}>
-                        {item}
+                    {listStatus.map((item) => (
+                      <MenuItem key={item.name} value={item.name}>
+                        {item.name}
                       </MenuItem>
                     ))}
                   </Select>

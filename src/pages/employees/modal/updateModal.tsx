@@ -56,7 +56,6 @@ export function UpdateModal({
   const [loading, setLoading] = useState(false);
   const [employeeImage, setEmployeeImage] = useState();
 
-
   const {
     register,
     handleSubmit,
@@ -110,7 +109,7 @@ export function UpdateModal({
 
   const getByEmployeeId = async () => {
     try {
-      const response = await findByEmployeeId(employee.id);      
+      const response = await findByEmployeeId(employee.id);
       if (response && response.data) {
         setEmployeeImage(response.data.imageId);
       }
@@ -341,9 +340,9 @@ export function UpdateModal({
                     <MenuItem value="">
                       <em>Selecione item</em>
                     </MenuItem>
-                    {listOcupacao.map((item: string) => (
-                      <MenuItem key={item} value={item}>
-                        {item}
+                    {listOcupacao.map((item) => (
+                      <MenuItem key={item.name} value={item.name}>
+                        {item.name}
                       </MenuItem>
                     ))}
                   </Select>
@@ -389,9 +388,9 @@ export function UpdateModal({
                 <MenuItem value="">
                   <em>Selecione item</em>
                 </MenuItem>
-                {listBoot.map((item: string) => (
-                  <MenuItem key={item} value={item}>
-                    {item}
+                {listBoot.map((item) => (
+                  <MenuItem key={item.name} value={item.name}>
+                    {item.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -432,9 +431,9 @@ export function UpdateModal({
                 <MenuItem value="">
                   <em>Selecione item</em>
                 </MenuItem>
-                {listBracelete.map((item: string) => (
-                  <MenuItem key={item} value={item}>
-                    {item}
+                {listBracelete.map((item) => (
+                  <MenuItem key={item.name} value={item.name}>
+                    {item.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -478,7 +477,9 @@ export function UpdateModal({
                   <em>Selecione item</em>
                 </MenuItem>
                 {departments.map((item) => (
-                  <MenuItem value={item.id}>{item.description}</MenuItem>
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.description}
+                  </MenuItem>
                 ))}
               </Select>
               {errors.departmentId && (
@@ -514,9 +515,9 @@ export function UpdateModal({
                 <MenuItem value="">
                   <em>Selecione item</em>
                 </MenuItem>
-                {listStatus.map((item: string) => (
-                  <MenuItem key={item} value={item}>
-                    {item}
+                {listStatus.map((item) => (
+                  <MenuItem key={item.name} value={item.name}>
+                    {item.name}
                   </MenuItem>
                 ))}
               </Select>

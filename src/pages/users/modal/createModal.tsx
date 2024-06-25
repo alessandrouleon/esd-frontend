@@ -266,8 +266,10 @@ export function CreateModal({
                 <MenuItem value="">
                   <em>Selecione item</em>
                 </MenuItem>
-                {listRoles.map((item: string) => (
-                  <MenuItem value={item}>{item}</MenuItem>
+                {listRoles.map((item) => (
+                  <MenuItem key={item.name} value={item.name}>
+                    {item.name}
+                  </MenuItem>
                 ))}
               </Select>
               {errors.roles && (

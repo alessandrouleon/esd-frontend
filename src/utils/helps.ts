@@ -10,22 +10,26 @@ export const MenuProps = {
 };
 
 export const listOcupacao = [
-  "Lider de Produção",
-  "Lider de CQ",
-  "Operador de produção",
-  "Testador",
-  "Dev TI",
-  "Operador de logística",
-  "Inspetor",
-  "Revisor",
+  { name: "Lider de Produção" },
+  { name: "Lider de CQ" },
+  { name: "Operador de produção" },
+  { name: "Testador" },
+  { name: "Dev TI" },
+  { name: "Operador de logística" },
+  { name: "Inspetor" },
+  { name: "Revisor" },
 ];
 //.map((item) => item.toUpperCase());
 
-export const listBoot = ["OK", "NOK", "NA"];
+export const listBoot = [{ name: "OK" }, { name: "NOK" }, { name: "NA" }];
 
-export const listBracelete = ["OK", "NOK", "NA"];
+export const listBracelete = [{ name: "OK" }, { name: "NOK" }, { name: "NA" }];
 
-export const listStatus = ["ativo", "férias", "inativo"];
+export const listStatus = [
+  { name: "ativo" },
+  { name: "férias" },
+  { name: "inativo" },
+];
 
 export const listRoles = [
   { name: "Full" },

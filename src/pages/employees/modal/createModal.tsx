@@ -335,9 +335,9 @@ export function CreateModal({
                     <MenuItem value="">
                       <em>Selecione item</em>
                     </MenuItem>
-                    {listOcupacao.map((item: string) => (
-                      <MenuItem key={item} value={item}>
-                        {item}
+                    {listOcupacao.map((item) => (
+                      <MenuItem key={item.name} value={item.name}>
+                        {item.name}
                       </MenuItem>
                     ))}
                   </Select>
@@ -383,8 +383,10 @@ export function CreateModal({
                 <MenuItem value="">
                   <em>Selecione item</em>
                 </MenuItem>
-                {listBoot.map((item: string) => (
-                  <MenuItem value={item}>{item}</MenuItem>
+                {listBoot.map((item) => (
+                  <MenuItem key={item.name} value={item.name}>
+                    {item.name}
+                  </MenuItem>
                 ))}
               </Select>
               {errors.boot && (
@@ -426,8 +428,10 @@ export function CreateModal({
                 <MenuItem value="">
                   <em>Selecione item</em>
                 </MenuItem>
-                {listBracelete.map((item: string) => (
-                  <MenuItem value={item}>{item}</MenuItem>
+                {listBracelete.map((item) => (
+                  <MenuItem key={item.name} value={item.name}>
+                    {item.name}
+                  </MenuItem>
                 ))}
               </Select>
               {errors.bracelete && (
