@@ -8,12 +8,14 @@ import TableRow from "@mui/material/TableRow";
 
 import { columns } from "./table/columns";
 import {
+  IFormUpdateUsers,
   IUsersProps,
   // IFormUpdateUsers,
   // IUsersProps,
   // UserExport,
   // initialUsersUpdate,
   initialStateData,
+  initialUsersUpdate,
   // initialUsersUpdate,
 } from "./interfaces";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -27,7 +29,7 @@ import { InitialAlertProps } from "../../components/alert/interfaces";
 import { findManyUsers, searchForUsers } from "../../services/users";
 import { CreateModal } from "./modal/createModal";
 import { Loader } from "../../components/loader";
-// import { UpdateModal } from "./modal/updateModal";
+import { UpdateModal } from "./modal/updateModal";
 // import { DeleteModal } from "./modal/deleteModal";
 // import { formatTime } from "../../utils/date";
 // import ExportXLSX from "../../utils/exportXLSX";
@@ -40,8 +42,8 @@ export function Users() {
   const [open, setOpen] = useState(false);
   const [dataRefresh, setDataRefresh] = useState(false);
   const [alert, setAlert] = useState(InitialAlertProps);
-  // const [user, setUser] = useState<IFormUpdateUsers>(initialUsersUpdate);
-  // const [openUpdate, setOpenUpdate] = useState(false);
+  const [user, setUser] = useState<IFormUpdateUsers>(initialUsersUpdate);
+  const [openUpdate, setOpenUpdate] = useState(false);
   // const [openDelete, setOpenDelete] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [selectedRow, setSelectedRow] = useState<string | null>(null);
@@ -57,11 +59,11 @@ export function Users() {
 
   const handleOpen = () => setOpen(!open);
 
-  //const handleUpdate = (item: IFormUpdateUsers) => {
-  //   setUser(item);
-  //   setOpenUpdate(!openUpdate);
-  //   setSelectedRow(item.id);
-  // };
+  const handleUpdate = (item: IFormUpdateUsers) => {
+    setUser(item);
+    setOpenUpdate(!openUpdate);
+    setSelectedRow(item.id);
+  };
 
   // const handleOpenDelete = (item: IFormUpdateUsers) => {
   //   setUser(item);
@@ -234,16 +236,16 @@ export function Users() {
         />
       )}
 
-      {/* {openUpdate && (
+      {openUpdate && (
         <UpdateModal
-          employee={employee}
+          user={user}
           open={openUpdate}
           setOpen={setOpenUpdate}
           setAlert={setAlert}
           setDataRefresh={setDataRefresh}
           dataRefresh={dataRefresh}
         />
-      )} */}
+      )}
 
       {/* {openDelete && (
         <DeleteModal
@@ -340,7 +342,7 @@ export function Users() {
                                 <Grid item>
                                   <IconButton
                                     size="small"
-                                    // onClick={() => handleUpdate(user)}
+                                    onClick={() => handleUpdate(user)}
                                   >
                                     <EditIcon />
                                   </IconButton>

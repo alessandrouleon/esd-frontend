@@ -15,9 +15,9 @@ export interface EmployeeProps {
 }
 
 export interface IUsersProps {
-  id?: string;
+  id: string;
   username: string;
-  password?: string;
+  password: string;
   status: string;
   roles: string;
   employeeId: string;

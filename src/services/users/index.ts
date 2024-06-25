@@ -13,17 +13,11 @@ export const updateUser = async (
   data: IUpdateUsersProps
 ) => {
   return await api.patch(`/users/${id}`, {
-    // name: data.name.trim(),
-    // registration: data.registration.trim(),
-    // boot: data.boot.trim(),
-    // bracelete: data.bracelete.trim(),
-    // status: data.status.trim(),
-    // occupation: data.occupation.trim(),
-    // imageId: data.imageId?.trim(),
-    // shiftId: data.shiftId.trim(),
-    // departmentId: data.departmentId.trim(),
-    // lineId: data.lineId.trim(),
-    ...data
+    username: data.username.trim(),
+    password: data.password.trim(),
+    status: data.status.trim(),
+    roles: data.roles.trim(),
+    employeeId: data.employeeId.trim(),
   });
 };
 
