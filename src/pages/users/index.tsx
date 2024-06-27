@@ -24,7 +24,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Grid, IconButton, debounce } from "@mui/material";
 import { COLORS } from "../../themes/colors";
 import EditIcon from "@mui/icons-material/Edit";
-import KeyIcon from '@mui/icons-material/Key';
+import KeyIcon from "@mui/icons-material/Key";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Toolbar } from "../../components/toolbar";
 import { Alert } from "../../components/alert";
@@ -34,7 +34,7 @@ import { CreateModal } from "./modal/createModal";
 import { Loader } from "../../components/loader";
 import { UpdateModal } from "./modal/updateModal";
 import { UpdateModalPassword } from "./modal/updateModalPassword";
-// import { DeleteModal } from "./modal/deleteModal";
+import { DeleteModal } from "./modal/deleteModal";
 // import { formatTime } from "../../utils/date";
 // import ExportXLSX from "../../utils/exportXLSX";
 // import axios from "axios";
@@ -49,8 +49,10 @@ export function Users() {
   const [user, setUser] = useState<IFormUpdateUsers>(initialUsersUpdate);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openUpdatePassword, setOpenUpdatePassword] = useState(false);
-  const [userPass, setUserPass] = useState<IFormUpdateUsersPassword>(initialUsersUpdatePassWord);
-  // const [openDelete, setOpenDelete] = useState(false);
+  const [userPass, setUserPass] = useState<IFormUpdateUsersPassword>(
+    initialUsersUpdatePassWord
+  );
+  const [openDelete, setOpenDelete] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [selectedRow, setSelectedRow] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -74,14 +76,14 @@ export function Users() {
   const handleUpdatePassword = (item: IFormUpdateUsersPassword) => {
     setUserPass(item);
     setOpenUpdatePassword(!openUpdatePassword);
-     setSelectedRow(item.id);
+    setSelectedRow(item.id);
   };
 
-  // const handleOpenDelete = (item: IFormUpdateUsers) => {
-  //   setUser(item);
-  //   setOpenDelete(!openDelete);
-  //   setSelectedRow(item.id);
-  // };
+  const handleOpenDelete = (item: IFormUpdateUsers) => {
+    setUser(item);
+    setOpenDelete(!openDelete);
+    setSelectedRow(item.id);
+  };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -160,11 +162,11 @@ export function Users() {
       try {
         const response = await findManyUsers(page);
         const users = response.data.users;
-         const customUsersList = users.map((item: IUsersProps) => ({
-         ...item,
-           occupation: item.Employee?.occupation,
-         }));
-         
+        const customUsersList = users.map((item: IUsersProps) => ({
+          ...item,
+          occupation: item.Employee?.occupation,
+        }));
+
         setData({
           users: customUsersList,
           total: response.data.total,
@@ -193,7 +195,7 @@ export function Users() {
           ...item,
           occupation: item.Employee?.occupation,
         }));
-        
+
         setData({
           users: customUsersList,
           total: response.data.total,
@@ -270,16 +272,16 @@ export function Users() {
         />
       )}
 
-      {/* {openDelete && (
+      {openDelete && (
         <DeleteModal
-          employee={employee}
+          user={user}
           open={openDelete}
           setOpen={setOpenDelete}
           setAlert={setAlert}
           setDataRefresh={setDataRefresh}
           dataRefresh={dataRefresh}
         />
-      )} */}
+      )}
 
       {loading ? (
         <div
@@ -294,14 +296,6 @@ export function Users() {
         </div>
       ) : (
         <>
-          {/* <Toolbar
-            titleModule="Funcionários"
-            onSearch={handleSearch}
-            handleExport={handleExport}
-            onUpload={handleUploadEmployee}
-            handleSave={handleOpen}
-          /> */}
-
           <Toolbar
             titleModule="Usuários"
             onSearch={handleSearch}
@@ -362,7 +356,7 @@ export function Users() {
                                 spacing={1}
                                 justifyContent="center"
                               >
-                                 <Grid item>
+                                <Grid item>
                                   <IconButton
                                     size="small"
                                     onClick={() => handleUpdatePassword(user)}
@@ -382,7 +376,7 @@ export function Users() {
                                 <Grid item>
                                   <IconButton
                                     size="small"
-                                    // onClick={() => handleOpenDelete(user)}
+                                    onClick={() => handleOpenDelete(user)}
                                     disabled={user.status !== "ativo"}
                                   >
                                     <DeleteOutlineIcon />

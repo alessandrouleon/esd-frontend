@@ -55,6 +55,7 @@ export function UpdateModalPassword({
 
   const handleClose = () => {
     setOpen(false);
+    setDataRefresh(!dataRefresh);
   };
 
   const fetchUsers = useCallback(async () => {

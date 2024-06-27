@@ -49,6 +49,7 @@ export function UpdateModal({
 
   const handleClose = () => {
     setOpen(false);
+    setDataRefresh(!dataRefresh);
   };
 
   const fetchEmployees = useCallback(async () => {
