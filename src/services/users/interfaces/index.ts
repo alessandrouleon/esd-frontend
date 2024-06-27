@@ -9,3 +9,8 @@ export interface ICreateUsersProps {
 export interface IUpdateUsersProps extends ICreateUsersProps {
   id: string;
 }
+
+export interface IUpdateUsersPasswordProps {
+  id: string;
+  password: string;
+}

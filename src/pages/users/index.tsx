@@ -9,6 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import { columns } from "./table/columns";
 import {
   IFormUpdateUsers,
+  IFormUpdateUsersPassword,
   IUsersProps,
   // IFormUpdateUsers,
   // IUsersProps,
@@ -16,12 +17,14 @@ import {
   // initialUsersUpdate,
   initialStateData,
   initialUsersUpdate,
+  initialUsersUpdatePassWord,
   // initialUsersUpdate,
 } from "./interfaces";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Grid, IconButton, debounce } from "@mui/material";
 import { COLORS } from "../../themes/colors";
 import EditIcon from "@mui/icons-material/Edit";
+import KeyIcon from '@mui/icons-material/Key';
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Toolbar } from "../../components/toolbar";
 import { Alert } from "../../components/alert";
@@ -30,6 +33,7 @@ import { findManyUsers, searchForUsers } from "../../services/users";
 import { CreateModal } from "./modal/createModal";
 import { Loader } from "../../components/loader";
 import { UpdateModal } from "./modal/updateModal";
+import { UpdateModalPassword } from "./modal/updateModalPassword";
 // import { DeleteModal } from "./modal/deleteModal";
 // import { formatTime } from "../../utils/date";
 // import ExportXLSX from "../../utils/exportXLSX";
@@ -44,6 +48,8 @@ export function Users() {
   const [alert, setAlert] = useState(InitialAlertProps);
   const [user, setUser] = useState<IFormUpdateUsers>(initialUsersUpdate);
   const [openUpdate, setOpenUpdate] = useState(false);
+  const [openUpdatePassword, setOpenUpdatePassword] = useState(false);
+  const [userPass, setUserPass] = useState<IFormUpdateUsersPassword>(initialUsersUpdatePassWord);
   // const [openDelete, setOpenDelete] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [selectedRow, setSelectedRow] = useState<string | null>(null);
@@ -63,6 +69,12 @@ export function Users() {
     setUser(item);
     setOpenUpdate(!openUpdate);
     setSelectedRow(item.id);
+  };
+
+  const handleUpdatePassword = (item: IFormUpdateUsersPassword) => {
+    setUserPass(item);
+    setOpenUpdatePassword(!openUpdatePassword);
+     setSelectedRow(item.id);
   };
 
   // const handleOpenDelete = (item: IFormUpdateUsers) => {
@@ -247,6 +259,17 @@ export function Users() {
         />
       )}
 
+      {openUpdatePassword && (
+        <UpdateModalPassword
+          userPass={userPass}
+          open={openUpdatePassword}
+          setOpen={setOpenUpdatePassword}
+          setAlert={setAlert}
+          setDataRefresh={setDataRefresh}
+          dataRefresh={dataRefresh}
+        />
+      )}
+
       {/* {openDelete && (
         <DeleteModal
           employee={employee}
@@ -339,6 +362,15 @@ export function Users() {
                                 spacing={1}
                                 justifyContent="center"
                               >
+                                 <Grid item>
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => handleUpdatePassword(user)}
+                                  >
+                                    <KeyIcon />
+                                  </IconButton>
+                                </Grid>
+
                                 <Grid item>
                                   <IconButton
                                     size="small"

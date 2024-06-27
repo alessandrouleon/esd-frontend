@@ -1,17 +1,17 @@
 import api from "../api";
 import { UserToken } from "../localStorage";
-import { ICreateUsersProps, IUpdateUsersProps } from "./interfaces";
+import {
+  ICreateUsersProps,
+  IUpdateUsersPasswordProps,
+  IUpdateUsersProps,
+} from "./interfaces";
 
 //endpoint usando para exibir foto do usuario logado
 export const createUser = async (data: ICreateUsersProps) => {
   return await api.post(`/users/`, data);
 };
 
-
-export const updateUser = async (
-  id: string,
-  data: IUpdateUsersProps
-) => {
+export const updateUser = async (id: string, data: IUpdateUsersProps) => {
   return await api.patch(`/users/${id}`, {
     username: data.username.trim(),
     status: data.status.trim(),
@@ -20,9 +20,18 @@ export const updateUser = async (
   });
 };
 
-// export const findByEmployeeId = async (id: string) => {
-//   return await api.get(`/employees/${id}`);
-// };
+export const updateUserPassword = async (
+  id: string,
+  data: IUpdateUsersPasswordProps
+) => {
+  return await api.patch(`/users/update/password/${id}`, {
+    password: data.password.trim(),
+  });
+};
+
+export const findByUserId = async (id: string) => {
+  return await api.get(`/users/${id}`);
+};
 
 export const deleteUser = async (id: string) => {
   return await api.delete(`/users/${id}`);

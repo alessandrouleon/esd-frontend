@@ -107,3 +107,27 @@ export interface UserExport {
   employeeId: string;
   Employee?: EmployeeProps;
 }
+
+export interface IFormUpdateUsersPassword {
+  id: string;
+  password: string;
+}
+
+export const initialUsersUpdatePassWord: IFormUpdateUsersPassword = {
+  id: "",
+  password: "",
+};
+
+export interface IEditModalPasswordProps {
+  userPass: IFormUpdateUsersPassword;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  setAlert: (data: {
+    open: boolean;
+    message: string;
+    type: "error" | "success";
+  }) => void;
+  setDataRefresh: (refresh: boolean) => void;
+  dataRefresh: boolean;
+}
+
