@@ -1,6 +1,6 @@
 export interface ICreateUsersProps {
   username: string;
-  password: string;
+  password?: string;
   status: string;
   roles: string;
   employeeId: string;

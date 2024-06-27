@@ -14,7 +14,6 @@ export const updateUser = async (
 ) => {
   return await api.patch(`/users/${id}`, {
     username: data.username.trim(),
-    password: data.password.trim(),
     status: data.status.trim(),
     roles: data.roles.trim(),
     employeeId: data.employeeId.trim(),

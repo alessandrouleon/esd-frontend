@@ -8,8 +8,6 @@ import {
   Select,
   MenuItem,
   CircularProgress,
-  InputAdornment,
-  IconButton,
 } from "@mui/material";
 import axios from "axios";
 import { useForm, SubmitHandler, DefaultValues } from "react-hook-form";
@@ -23,7 +21,6 @@ import { FormModal } from "../styles";
 import { findAllEmployeeNotPaginated } from "../../../services/employees";
 import { MenuProps, listRoles, listStatus } from "../../../utils/helps";
 import { useCallback, useEffect, useState } from "react";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { updateUser } from "../../../services/users";
 
 export function UpdateModal({
@@ -39,20 +36,11 @@ export function UpdateModal({
   };
   const [employees, setEmployees] = useState<EmployeeProps[]>([]);
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
 
-  const handleClickShowPassword = () => setShowPassword(!showPassword);
-
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
 
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
     reset,
   } = useForm<IFormUpdateUsers>({
@@ -77,16 +65,8 @@ export function UpdateModal({
   const onSubmit: SubmitHandler<IFormUpdateUsers> = async (data) => {
     setLoading(true);
     try {
-      let currentPassword = "";
-      if (!data.password) {
-        currentPassword = user.password;
-      } else {
-        currentPassword = data.password;
-      }
-
       const response = await updateUser(user.id, {
         ...data,
-        password: currentPassword,
       });
       if (response.status === 200) {
         setDataRefresh(!dataRefresh);
@@ -114,9 +94,7 @@ export function UpdateModal({
 
   useEffect(() => {
     fetchEmployees();
-    setValue("password", "");
-    console.log("fetchEmployees::", fetchEmployees());
-  }, [setValue, fetchEmployees]);
+  }, [fetchEmployees]);
 
   return (
     <DialogContainer
@@ -139,7 +117,7 @@ export function UpdateModal({
       ) : (
         <>
           <FormModal onSubmit={handleSubmit(onSubmit)}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} width={450}>
               <Grid item xs={12}>
                 <FormControl fullWidth size="small">
                   <InputLabel id="employeeId">Funcionário</InputLabel>
@@ -180,7 +158,7 @@ export function UpdateModal({
                   )}
                 </FormControl>
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <TextField
                   id="username"
                   label="Usuário"
@@ -207,34 +185,7 @@ export function UpdateModal({
                   }
                 />
               </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  id="password-id"
-                  label="Senha"
-                  placeholder="Digite sua senha..."
-                  size="small"
-                  fullWidth
-                  type={showPassword ? "text" : "password"}
-                  variant="outlined"
-                  defaultValue=""
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                    sx: { fontSize: 14 },
-                  }}
-                  {...register("password", {})}
-                />
-              </Grid>
+           
               <Grid item xs={6}>
                 <FormControl fullWidth size="small">
                   <InputLabel id="rolesId">Permissão</InputLabel>
