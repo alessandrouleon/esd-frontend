@@ -46,7 +46,7 @@ export const searchForUsers = async (page: number, value: string) => {
 };
 
 export const findAllUsersNotPaginated = async () => {
-  return await api.get(`/users/allEmployee`);
+  return await api.get(`/users/allUsers`);
 };
 
 export async function uploadUsers(file: File) {

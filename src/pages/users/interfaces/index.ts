@@ -106,6 +106,7 @@ export interface UserExport {
   roles: string;
   employeeId: string;
   Employee?: EmployeeProps;
+  createdAt: string;
 }
 
 export interface IFormUpdateUsersPassword {

@@ -13,12 +13,10 @@ import {
   IUsersProps,
   // IFormUpdateUsers,
   // IUsersProps,
-  // UserExport,
-  // initialUsersUpdate,
+  UserExport,
   initialStateData,
   initialUsersUpdate,
   initialUsersUpdatePassWord,
-  // initialUsersUpdate,
 } from "./interfaces";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Grid, IconButton, debounce } from "@mui/material";
@@ -29,14 +27,19 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Toolbar } from "../../components/toolbar";
 import { Alert } from "../../components/alert";
 import { InitialAlertProps } from "../../components/alert/interfaces";
-import { findManyUsers, searchForUsers } from "../../services/users";
+import {
+  findAllUsersNotPaginated,
+  findManyUsers,
+  searchForUsers,
+} from "../../services/users";
 import { CreateModal } from "./modal/createModal";
 import { Loader } from "../../components/loader";
 import { UpdateModal } from "./modal/updateModal";
 import { UpdateModalPassword } from "./modal/updateModalPassword";
 import { DeleteModal } from "./modal/deleteModal";
-// import { formatTime } from "../../utils/date";
-// import ExportXLSX from "../../utils/exportXLSX";
+import { formatTime } from "../../utils/date";
+import ExportXLSX from "../../utils/exportXLSX";
+import { Employees } from "../employees";
 // import axios from "axios";
 
 export function Users() {
@@ -93,34 +96,27 @@ export function Users() {
   };
 
   //Exportar todos os items da tabela de listagem.
-  // const handleExport = useCallback(async () => {
-  //   try {
-  //     const response = await findAllEmployeeNotPaginated();
-  //     if (response.status === 200) {
-  //       const parseData = response.data.employees.map(
-  //         (item: EmployeeExport) => ({
-  //           Nome: item.name,
-  //           Matricula: item.registration,
-  //           Bota: item.boot,
-  //           Pulseira: item.bracelete,
-  //           Startos: item.status,
-  //           Ocupação: item.occupation,
-  //           Departamento: item.Department?.description,
-  //           Turno: item.Shift?.description,
-  //           Linha: item.Line?.code,
-  //           "Data de criação": formatTime(item.createdAt),
-  //         })
-  //       );
-  //       ExportXLSX(parseData, "Lista de Funcioários");
-  //     }
-  //   } catch (error) {
-  //     setAlert({
-  //       open: true,
-  //       message: "Erro ao emitir relatório de funcionários",
-  //       type: "error",
-  //     });
-  //   }
-  // }, []);
+  const handleExport = useCallback(async () => {
+    try {
+      const response = await findAllUsersNotPaginated();
+      if (response.status === 200) {
+        const parseData = response.data.users.map((item: UserExport) => ({
+          Nome: Employees.name,
+          "Nome de Usuário": item.username,
+          Permissão: item.roles,
+          Status: item.status,
+          "Data de criação": formatTime(item.createdAt),
+        }));
+        ExportXLSX(parseData, "Lista de Usuários");
+      }
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: "Erro ao emitir relatório de usuários",
+        type: "error",
+      });
+    }
+  }, []);
 
   //Inport file
   // const handleUploadEmployee = async (
@@ -299,7 +295,7 @@ export function Users() {
           <Toolbar
             titleModule="Usuários"
             onSearch={handleSearch}
-            handleExport={() => {}}
+            handleExport={handleExport}
             onUpload={() => {}}
             handleSave={handleOpen}
           />
