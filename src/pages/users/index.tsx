@@ -11,8 +11,6 @@ import {
   IFormUpdateUsers,
   IFormUpdateUsersPassword,
   IUsersProps,
-  // IFormUpdateUsers,
-  // IUsersProps,
   UserExport,
   initialStateData,
   initialUsersUpdate,
@@ -31,6 +29,7 @@ import {
   findAllUsersNotPaginated,
   findManyUsers,
   searchForUsers,
+  uploadUsers,
 } from "../../services/users";
 import { CreateModal } from "./modal/createModal";
 import { Loader } from "../../components/loader";
@@ -40,7 +39,7 @@ import { DeleteModal } from "./modal/deleteModal";
 import { formatTime } from "../../utils/date";
 import ExportXLSX from "../../utils/exportXLSX";
 import { Employees } from "../employees";
-// import axios from "axios";
+import axios from "axios";
 
 export function Users() {
   const [page, setPage] = useState(0);
@@ -119,38 +118,41 @@ export function Users() {
   }, []);
 
   //Inport file
-  // const handleUploadEmployee = async (
-  //   event: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const files = event.target.files;
-  //   if (!files || files.length === 0) return;
-  //   const file = files[0];
-  //   try {
-  //     const response = await uploadEmployee(file);
-  //     if (response && (response.status === 201 || response.status === 200)) {
-  //       setAlert({
-  //         open: true,
-  //         message: "Upload do funcionário realizado com sucesso.",
-  //         type: "success",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     if (axios.isAxiosError(error) && error.response) {
-  //       const { message } = error.response.data;
-  //       setAlert({
-  //         open: true,
-  //         message: message || "Internal server error",
-  //         type: "error",
-  //       });
-  //     } else {
-  //       setAlert({
-  //         open: true,
-  //         message: "Erro ao emitir relatório de turnos",
-  //         type: "error",
-  //       });
-  //     }
-  //   }
-  // };
+  const handleUploadUsers = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    try {
+      const response = await uploadUsers(file);
+      setLoading(true);
+      if (response && (response.status === 201 || response.status === 200)) {
+        setAlert({
+          open: true,
+          message: "Upload de usuário realizado com sucesso.",
+          type: "success",
+        });
+        setPage(0);
+        setDataRefresh(!dataRefresh);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const { message } = error.response.data;
+        setAlert({
+          open: true,
+          message: message || "Internal server error",
+          type: "error",
+        });
+      } else {
+        setAlert({
+          open: true,
+          message: "Erro ao emitir relatório de turnos",
+          type: "error",
+        });
+      }
+    }
+  };
 
   const fetchData = useCallback(
     async (page: number) => {
@@ -296,7 +298,7 @@ export function Users() {
             titleModule="Usuários"
             onSearch={handleSearch}
             handleExport={handleExport}
-            onUpload={() => {}}
+            onUpload={handleUploadUsers}
             handleSave={handleOpen}
           />
           <TableContainer>
