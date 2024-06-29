@@ -4,12 +4,14 @@ import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import TimelineIcon from "@mui/icons-material/Timeline";
 import Diversity3Icon from "@mui/icons-material/Diversity3";
 import GroupIcon from "@mui/icons-material/Group";
+import SpeedIcon from '@mui/icons-material/Speed';
 import { Shifts } from "../pages/shifts";
 import { Departments } from "../pages/departments";
 import { Dashboards } from "../pages/dashboards/inde";
 import { Lines } from "../pages/lines";
 import { Employees } from "../pages/employees";
 import { Users } from "../pages/users";
+import { TestsESD } from "../pages/testsESD";
 
 export const APP_PAGES = [
   {
@@ -56,6 +58,13 @@ export const APP_PAGES = [
     route: "/turno",
     icon: <NightsStayIcon />,
     component: <Shifts />,
+    showMenu: true,
+  },
+  {
+    title: "Teste ESD",
+    route: "/tests-esd",
+    icon: <SpeedIcon />,
+    component: <TestsESD />,
     showMenu: true,
   },
 ];
