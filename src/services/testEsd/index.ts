@@ -7,3 +7,7 @@ export const findManyTestEsds = async (page: number) => {
 export const searchForTestEsds = async (page: number, value: string) => {
   return await api.get(`/testEsd/search/${page}?value=${value}`);
 };
+
+export const findAllTestEsdNotPaginated = async () => {
+  return await api.get(`/testEsd/allTestEsds`);
+};

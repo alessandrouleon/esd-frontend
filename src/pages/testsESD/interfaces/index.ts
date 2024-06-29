@@ -61,3 +61,22 @@ export const initialStateData: ITestEsdData = {
   prevPage: null,
   lastPage: 0,
 };
+
+export interface TestEsdExport {
+  // username: string;
+  // password: string;
+  // status: string;
+  // roles: string;
+  // employeeId: string;
+  // Employee?: EmployeeProps;
+  // createdAt: string;
+  boot: string;
+  bracelete: string;
+  employeeId?: string;
+  Employee?: EmployeeProps;
+  name?: string;
+  department: string;
+  line?: string;
+  shift?: string;
+  createdAt: string;
+}

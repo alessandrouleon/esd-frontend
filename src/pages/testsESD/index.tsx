@@ -6,15 +6,17 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { columns } from "./table/columns";
-import {  ITestEsdProps, initialStateData } from "./interfaces";
+import {  ITestEsdProps, TestEsdExport, initialStateData } from "./interfaces";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { debounce } from "@mui/material";
 import { COLORS } from "../../themes/colors";
 import { Alert } from "../../components/alert";
 import { InitialAlertProps } from "../../components/alert/interfaces";
 import { Loader } from "../../components/loader";
-import { findManyTestEsds, searchForTestEsds } from "../../services/testEsd";
+import { findAllTestEsdNotPaginated, findManyTestEsds, searchForTestEsds } from "../../services/testEsd";
 import { ToolbarTestEsd } from "./components/toolbar";
+import { formatTime } from "../../utils/date";
+import ExportXLSX from "../../utils/exportXLSX";
 
 export function TestsESD() {
   const [page, setPage] = useState(0);
@@ -35,7 +37,6 @@ export function TestsESD() {
     setPage(newPage);
   };
 
-  // const handleOpen = () => setOpen(!open);
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -43,6 +44,31 @@ export function TestsESD() {
     setRowsPerPage(+event.target.value);
     setPage(page + 1);
   };
+
+  //Exportar todos os items da tabela de listagem.
+  const handleExport = useCallback(async () => {
+    try {
+      const response = await findAllTestEsdNotPaginated();
+      if (response.status === 200) {
+        const parseData = response.data.testEsd.map((item: TestEsdExport) => ({
+          Nome: item.Employee?.name,
+          Departamento: item.Employee?.Department?.description,
+          Turno: item.Employee?.Shift?.description,
+          Linha: item.Employee?.Line?.code,
+          "Bota antiestática": item.boot,
+          "Pulseira antiestática": item.bracelete,
+          "Data de criação": formatTime(item.createdAt),
+        }));
+        ExportXLSX(parseData, "Lista de Teste ESD");
+      }
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: "Erro ao emitir relatório de usuários",
+        type: "error",
+      });
+    }
+  }, []);
 
 
   const fetchData = useCallback(
@@ -149,9 +175,8 @@ export function TestsESD() {
           <ToolbarTestEsd
             titleModule="Gerenciador de Testes ESD"
             onSearch={handleSearch}
-            handleExport={() => {}}
+            handleExport={handleExport}
             onUpload={() => {}}
-            // handleSave={() => {}}
           />
           <TableContainer>
             <Table stickyHeader aria-label="sticky table">
