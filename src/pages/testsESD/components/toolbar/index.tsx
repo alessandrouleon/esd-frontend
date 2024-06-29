@@ -1,8 +1,6 @@
-import React, { useCallback, useEffect
-    // , useRef 
-} from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import {
-//   Button,
+  Button,
   Grid,
   IconButton,
   InputAdornment,
@@ -10,29 +8,26 @@ import {
   Typography,
 } from "@mui/material";
 import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
-// import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-// import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
-// import AddIcon from "@mui/icons-material/Add";
-// import Tooltip from "@mui/material/Tooltip";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
+import Tooltip from "@mui/material/Tooltip";
 import { COLORS } from "../../../../themes/colors";
 
 interface HeaderProps {
   titleModule: string;
   onSearch: (searchValue: string) => void;
-//   handleSave: () => void;
-//   handleExport: () => void;
-//   onUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleExport: () => void;
+  onUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function ToolbarTest({
+export function ToolbarTestEsd({
   titleModule,
   onSearch,
-//   handleSave,
-//   handleExport,
-//   onUpload,
+  handleExport,
+  onUpload,
 }: HeaderProps) {
   const [searchValue, setSearchValue] = React.useState("");
-//   const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -51,11 +46,11 @@ export function ToolbarTest({
     }
   }, [searchValue, handleClearSearch]);
 
-//   const handleClickImport = () => {
-//     if (fileInputRef.current) {
-//       fileInputRef.current.click();
-//     }
-//   };
+  const handleClickImport = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
 
   const clearSearchButton = (
     <IconButton
@@ -99,7 +94,7 @@ export function ToolbarTest({
             onChange={handleSearch}
           />
         </Grid>
-        {/* <Grid item style={{ textAlign: "right" }}>
+        <Grid item style={{ textAlign: "right" }}>
           <Tooltip title="Exportar planilha" placement="top">
             <Button
               variant="text"
@@ -136,18 +131,7 @@ export function ToolbarTest({
               event.currentTarget.value = "";
             }}
           />
-          <Button
-            variant="outlined"
-            onClick={handleSave}
-            sx={{
-              marginLeft: "0.5rem",
-              padding: 0,
-              borderRadius: 50,
-            }}
-          >
-            <AddIcon fontSize="large" />
-          </Button>
-        </Grid> */}
+        </Grid>
       </Grid>
     </>
   );
